@@ -1,5 +1,7 @@
 # Interactive Geographical Maps of COVID19 Data With Time History
 
+Main presentation page: [www.netlify.com/covid-map](www.netlify.com/covid-map)
+
 Present well sourced COVID19 data with the following key features:
 
 * Interactive geographical heat map

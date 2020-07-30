@@ -1,0 +1,6 @@
+[submodule "DataSet/JH"]
+	path = DataSet/JH
+	url = https://github.com/CSSEGISandData/COVID-19.git
+[submodule "DataSet/CTP"]
+	path = DataSet/CTP
+	url = https://github.com/COVID19Tracking/covid-tracking-data.git
