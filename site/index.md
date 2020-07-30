@@ -15,8 +15,9 @@ Code written in Python (and Javascript) to generate interactive html page.
 
 ## Sources
 
-Currently:
-
-* The Covid Tracking Project for US state data
-* John Hopkins University for county (and other) data
-* US Census Bureau for US geographical data
+* Produced using Python with Bokeh and other modules
+* GitHub repository for this project: [https://github.com/thedrdos/covid-map](https://github.com/thedrdos/covid-map)
+* State and County Geographical Data from [The US Census Bureau](http://www2.census.gov/geo/tiger/)
+* COVID-19 Data on States from [The COVID Tracking Project](https://covidtracking.com) or on [GitHub](https://github.com/COVID19Tracking/covid-tracking-data)
+* COVID-19 Data on Counties from [The John Hopkins University Coronavirus Resource Center](https://coronavirus.jhu.edu)
+     or on [GitHub](https://github.com/CSSEGISandData/COVID-19.gi)

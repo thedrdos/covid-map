@@ -792,13 +792,13 @@ heading = Div(text="""
 footer = Div(text="""
 <h3> Sources </h3>
 <ul>
-    <li>GitHub repository link forthcoming. </li>
+    <li>GitHub repository for this project: <a href="https://github.com/thedrdos/covid-map"> https://github.com/thedrdos/covid-map </a>. </li>
     <li>Produced using Python with Bokeh and other modules.</li>
 	<li>State and County Geographical Data from <a href="http://www2.census.gov/geo/tiger/">The US Census Bureau</a>.</li>
 	<li>COVID-19 Data on States from <a href="https://covidtracking.com">The COVID Tracking Project</a>
-     or on <a href="https://github.com/COVID19Tracking/covid-tracking-data.git">GitHub</a>.</li>
+     or on <a href="https://github.com/COVID19Tracking/covid-tracking-data">GitHub</a>.</li>
 	<li>COVID-19 Data on Counties from <a href="https://coronavirus.jhu.edu">The John Hopkins University Coronavirus Resource Center</a>
-     or on <a href="https://github.com/CSSEGISandData/COVID-19.gi">GitHub</a>.</li>
+     or on <a href="https://github.com/CSSEGISandData/COVID-19">GitHub</a>.</li>
 </ul>
 """)
 
