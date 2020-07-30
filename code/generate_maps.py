@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 23 10:41:38 2020
+Created on Thu Jul 23 2020
 
-@author: david_sigthorsson
+@author: TheDrDOS
 """
 
 import datetime
@@ -21,33 +21,33 @@ def demo():
     # from bokeh.io import show
     # from bokeh.models import ColorMapper, LogColorMapper
     # from bokeh.palettes import Viridis6 as palette
-    # from bokeh.plotting import figure 
+    # from bokeh.plotting import figure
     # from bokeh.models import ColumnDataSource # for interfacing with Pandas
     # import numpy as np
-    
+
     # map_data_state  = get_map_data(entity='state')
     # map_data_county = get_map_data(entity='county')
-    
+
     # state_to_id = dict(zip(map_data_state['name'].values.tolist(),map_data_state['state_id'].values.tolist()))
     # id_to_state = dict(zip(map_data_state['state_id'].values.tolist(),map_data_state['name'].values.tolist()))
-        
+
     # state_name = 'Ohio'
     # state_id = state_to_id[state_name]
-    
+
     # map_data = map_data_county[map_data_county['state_id']==state_id].copy()
-    
+
     # map_data['xc'] = [np.nanmean(d,) for d in map_data['x']]
     # map_data['yc'] = [np.nanmean(d,) for d in map_data['y']]
-    
+
     # map_data['cnt'] = [cnt+1 for cnt,d in enumerate(map_data['name'])]
-    
+
     # data = {
     #     'x' : [  for d in map_data]
     #     ,
     #     }
-        
-    # color_mapper = ColorMapper(palette=palette) 
-        
+
+    # color_mapper = ColorMapper(palette=palette)
+
     # TOOLS = "pan,wheel_zoom,reset,hover,save"
 
     # # p = figure(
@@ -56,27 +56,27 @@ def demo():
     # #     tooltips=[
     # #         ("Name", "@name"),("(Long, Lat)", "($x, $y)")
     # #     ])
-    
+
     # # p.grid.grid_line_color = None
     # # p.hover.point_policy = "follow_mouse"
     # p = figure(
     #     title=state_name, tools=TOOLS,
     #     x_axis_location=None, y_axis_location=None,
-    #     )    
-    
+    #     )
+
     # p.patches('x', 'y', source=data)
-    
+
     # # p.patches('x', 'y', source=data,
     # #           fill_color={'field': 'cnt', 'transform': color_mapper},
     # #           fill_alpha=0.7, line_color="white", line_width=0.5)
-    
-    # show(p)   
-    
-    
+
+    # show(p)
+
+
 # palette = tuple(reversed(palette))
 
 # state_ids = {
-#     code : 
+#     code :
 #     }
 
 # counties = {
@@ -112,27 +112,27 @@ def demo():
 #           fill_color={'field': 'rate', 'transform': color_mapper},
 #           fill_alpha=0.7, line_color="white", line_width=0.5)
 
-# show(p)    
+# show(p)
 
 def get_map_data(entity='county',resolution='high', local_file_path='./map_data/', year = (datetime.datetime.now().year-1)):
     """
-    Get data to e.g. generate colored maps of US states or counties    
+    Get data to e.g. generate colored maps of US states or counties
 
     Parameters
     ----------
     entity : string, 'county', 'state', and 'nation' are valid
-        DESCRIPTION. 
+        DESCRIPTION.
         The default is 'county'.
     resolution : string, 'high', 'medium', and 'low' are valid
-        DESCRIPTION. 
+        DESCRIPTION.
         The default is 'high'.
-    local_file_path : string, path to the map data 
+    local_file_path : string, path to the map data
         This is where data will be downloaded to from www2.census.gov/geo/tiger/ d
-        if the data files are not available already. 
+        if the data files are not available already.
         The default is './map_data/'.
-    year : integer, year from which to download the data 
-        Data isn't necessarily available from the current year, 
-        so previous year is used by default. (Tested with 2019) 
+    year : integer, year from which to download the data
+        Data isn't necessarily available from the current year,
+        so previous year is used by default. (Tested with 2019)
         The default is (datetime.datetime.now().year-1).
 
     Returns
@@ -141,7 +141,7 @@ def get_map_data(entity='county',resolution='high', local_file_path='./map_data/
         Contains the location data (latitude and longitude) for each entity
         ('x', and 'lats' are the latitudes, 'y' and 'lons' are the longitudes)
         Also has the state id (see entity='state' to see the id of each state)
-        Also 'name' has the name of the entities (states or counties). 
+        Also 'name' has the name of the entities (states or counties).
 
     """
     entities = {
@@ -149,15 +149,15 @@ def get_map_data(entity='county',resolution='high', local_file_path='./map_data/
         'state' : 'state',
         'nation': 'nation',
         }
-    
+
     resolutions = {
         'high'  : '500k',
         'medium': '5m',
         'low'   : '20m'
         }
-    
+
     shape_data_file = 'cb_'+str(year)+'_us_'+entities[entity]+'_'+resolutions[resolution]
-    
+
     #url = "http://www2.census.gov/geo/tiger/GENZ2015/shp/" + shape_data_file + ".zip"
     url = "http://www2.census.gov/geo/tiger/GENZ" + str(year) + "/shp/" + shape_data_file + ".zip"
     zfile = local_file_path + shape_data_file + ".zip"
@@ -207,12 +207,12 @@ def lonlat_to_xy(map_data):
     import math
     allxs = []
     allys = []
-    
+
     for (lons,lats) in zip(map_data['lons'],map_data['lats']) :
         xs = []
         ys = []
         xys = []
-    
+
         for (lon,lat) in zip(lons,lats):
             if math.isnan(lon)|math.isnan(lat):
                 x = math.nan
@@ -222,11 +222,11 @@ def lonlat_to_xy(map_data):
                 x = r_major * math.radians(lon)
                 scale = x/lon
                 y = 180.0/math.pi * math.log(math.tan(math.pi/4.0 + (lat * (math.pi/180.0)/2.0))) * scale
-                    
+
             xs.append(x)
             ys.append(y)
             xys.append((x,y))
-            
+
         allxs.append(xs)
         allys.append(ys)
     map_data['x'] = allxs

@@ -1,7 +1,7 @@
 """
 Created on 2020/03/31
 
-@author: David O. Sigthorsson (sigthorsson@gmail.com)
+@author: TheDrDOS
 
 Make the landing page website
 

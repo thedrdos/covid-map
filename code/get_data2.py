@@ -3,7 +3,7 @@
 """
 Created on Tue Jul 21 2020
 
-@author: david_sigthorsson
+@author: TheDrDOS
 
 Interface with COVID, population, and location data from various sources
 
@@ -34,7 +34,7 @@ Format the data with columns like the CTP data which has the following columns
  'negativeIncrease',
  'positiveIncrease',
  'totalTestResultsIncrease'
- 
+
  Additional columns:
      'state' - equivalent to country when reading global
      'country'
@@ -82,7 +82,7 @@ def update():
     """
     os.system("git submodule update --recursive --remote")
     return None
-    
+
     # %% Load USA data
 def load_US():
     """
@@ -99,7 +99,7 @@ def load_US():
 
 def dict_US():
     """
-    List all available states for the US ( obtained using load_state() ) 
+    List all available states for the US ( obtained using load_state() )
     """
     df = load_US()
     ret = {
@@ -108,11 +108,11 @@ def dict_US():
         }
     ret['names']=get_state_name(ret['states'])
 
-    return ret 
-    
+    return ret
+
 def print_US():
     """
-    Print all available data for the US ( obtained using load_state() ) 
+    Print all available data for the US ( obtained using load_state() )
     """
     df = load_US()
     # List the available data
@@ -126,33 +126,33 @@ def print_US():
             print("\t'"+s+"'")
         else:
             print("\t'"+s+"'",end="")
-    return 
-    
+    return
+
 def load_state(state):
     """
     Given a country name (str), return a dataframe with the data for that country
     """
-    
-    if isinstance(state,list): 
+
+    if isinstance(state,list):
         pass
     else:
-        state = [state]  
-         
-    state = get_state_abbreviation(state)  
-    
+        state = [state]
+
+    state = get_state_abbreviation(state)
+
     # Load the US data
     dso = load_US()
-    
+
     names = get_state_name(state)
     lonlat = get_state_location(names)
     pop   = get_state_population(names)
-    
+
     out ={}
     for n, s in enumerate(state):
         ds = dso[dso['state']==s] # Select the state
-        ds = ds[ds['positive'].notna()] # Remove rows with no total positive cases reported 
+        ds = ds[ds['positive'].notna()] # Remove rows with no total positive cases reported
         ds = ds[ds['positive']!=0]      # Remove rows with zero total positive cases reported
-        
+
         out[s]={
             'name': names[n],
             'dataframe': ds,
@@ -161,8 +161,8 @@ def load_state(state):
             'lonlat': lonlat[n],
             'population' : pop[n],
             'type': 'state',
-            }   
-    return out 
+            }
+    return out
 
 def get_state_name(state):
     """
@@ -176,7 +176,7 @@ def get_state_name(state):
     ret = []
     for st in state:
         if df['state'].str.contains(st).any():
-            ret.append(df[df['state']==st]['name'].iloc[0])   
+            ret.append(df[df['state']==st]['name'].iloc[0])
         else:
             ret.append(st)
     return ret
@@ -193,7 +193,7 @@ def get_state_abbreviation(state):
     ret = []
     for st in state:
         if df['name'].str.contains(st).any() & (st not in ['US','UK']):
-            ret.append(df[df['name']==st]['state'].iloc[0])   
+            ret.append(df[df['name']==st]['state'].iloc[0])
         else:
             ret.append(st)
     return ret
@@ -211,7 +211,7 @@ def get_state_population(state):
     ret = []
     for st in state:
         if df['Province_State'].str.contains(st).any() & (st not in ['US','UK']):
-            ret.append(df[df['Province_State']==st]['Population'].iloc[0])   
+            ret.append(df[df['Province_State']==st]['Population'].iloc[0])
         else:
             ret.append(float('NaN'))
 
@@ -241,7 +241,7 @@ def get_state_location(state):
     return ret
 
 
-    
+
 
 # %% Load Global data
 def load_Global():
@@ -255,31 +255,31 @@ def load_Global():
         'recovered': pd.read_csv(csv_data_file_Global['recovered_global']),
         'death':    pd.read_csv(csv_data_file_Global['deaths_globa']),
     }
- 
+
     return dfd
 
 def load_country(country):
     """
     Given a country name/s (str/list), return a dictionary with the data for that country
     """
-    
-    if isinstance(country,list): 
+
+    if isinstance(country,list):
         pass
     else:
-        country = [country]    
-      
+        country = [country]
+
     dfd = load_Counties()
-    
+
     out = {}
-    
+
     dfd = load_Global()
-    
+
     pop     = get_country_population(country)
     lonlat  = get_country_location(country)
-    
+
     for key in dfd:
             df = dfd[key].drop(columns=['Province/State','Lat','Long']).groupby('Country/Region').sum()
-            
+
     for n,c in enumerate(country):
         ds = pd.DataFrame()
         for key in dfd:
@@ -291,7 +291,7 @@ def load_country(country):
             df= df[c]
             df= df.to_frame(name=key)
             ds = df.join(ds)
-       
+
         out[c]={
             'name': c,
             'dataframe': ds,
@@ -300,8 +300,8 @@ def load_country(country):
             'lonlat': lonlat[n],
             'population' : pop[n],
             'type': 'country',
-            }        
-        
+            }
+
     return out
 
 def get_countries():
@@ -313,7 +313,7 @@ def get_countries():
 
 def print_countries():
     """
-    Print all available countries 
+    Print all available countries
     """
     cs = sorted(get_countries())
     # List the available data
@@ -324,7 +324,7 @@ def print_countries():
         else:
             print("'"+s+"'\t".expandtabs(32),end="")
     return cs
-    
+
 
 def get_country_population(state):
     """
@@ -372,46 +372,46 @@ def load_Counties():
         'positive': pd.read_csv(csv_data_file_Global['confirmed_US']),
         'death':    pd.read_csv(csv_data_file_Global['deaths_US']),
     }
- 
+
     return dfd
 
 def load_county(county_state_country):
     """
     Given a country name (str)/list, return a dictionary with time history data in a dataframe and rest in other fields
     """
-    if isinstance(county_state_country,list): 
+    if isinstance(county_state_country,list):
         pass
     else:
-        county_state_country = [county_state_country]    
-        
+        county_state_country = [county_state_country]
+
     county_state_country_org = county_state_country.copy()
-            
+
     for n, csc in enumerate(county_state_country):
         if not csc.endswith(', US'):
             county_state_country[n] = csc+', US'
-    
-    
+
+
     dfd = load_Counties()
-    
+
     Combined_Keys = dfd['positive']['Combined_Key'].tolist()
-    
+
      # Find location and population data
-    aux = dfd['death'].T.loc[['Lat','Long_','Population','Combined_Key']] 
-    aux = aux.rename({'Lat':'lat','Long_':'lon','Population':'pop'},axis='index')    
+    aux = dfd['death'].T.loc[['Lat','Long_','Population','Combined_Key']]
+    aux = aux.rename({'Lat':'lat','Long_':'lon','Population':'pop'},axis='index')
     aux.columns = aux.loc['Combined_Key'] # assign the combined key row as the columns
     aux = aux.drop('Combined_Key')        # now the combined key row is redundant since its embedded in defining the column names
-        
+
     # Drop unused columns
     for key in dfd:
         if key is 'positive':
             dfd[key] = dfd[key].drop(columns=['UID','iso2','iso3','code3','FIPS','Province_State','Country_Region','Lat','Long_']).groupby('Combined_Key').sum()
         else:
             dfd[key] = dfd[key].drop(columns=['UID','iso2','iso3','code3','FIPS','Province_State','Country_Region','Lat','Long_','Population']).groupby('Combined_Key').sum()
-          
+
     out = {}
     for n,csc in enumerate(county_state_country):
         ds  = pd.DataFrame()
-        
+
         if csc in Combined_Keys:
             # Get the loaded timehistory data
             for key in dfd:
@@ -423,9 +423,9 @@ def load_county(county_state_country):
                 df= df[csc]
                 df= df.to_frame(name=key)
                 ds = df.join(ds)
-            ds['recovered'] = 0 # no data on recovery in counties   
-         
-            
+            ds['recovered'] = 0 # no data on recovery in counties
+
+
             # Assign the data to the output dictionary
             out[county_state_country_org[n]]={
                 'name': county_state_country_org[n],
@@ -440,8 +440,8 @@ def load_county(county_state_country):
             # fill empty dataframe
             for k in dfd.keys():
                 ds[k] = [float('NaN')]
-            ds['recovered'] = [float('NaN')] # no data on recovery in counties  
-                
+            ds['recovered'] = [float('NaN')] # no data on recovery in counties
+
             # Assign the data to the output dictionary
             out[county_state_country_org[n]]={
                 'name': county_state_country_org[n],
@@ -459,21 +459,21 @@ def get_counties(state=''):
     Return a list of all available counties (optionally give state name)
     """
     dfd = load_Counties()
-        
+
     ret = dfd['positive']['Combined_Key'].unique().tolist()
-    
+
     if state is '':
         ret = dfd['positive']['Combined_Key'].unique().tolist()
     else:
         ds = pd.DataFrame(dfd['positive'])
         ds = ds[ds['Province_State']==state]
         ret = ds['Combined_Key'].tolist()
-    
-    return ret 
+
+    return ret
 
 def print_counties():
     """
-    Print all available countries 
+    Print all available countries
     """
     cs = sorted(get_counties())
     # List the available data
@@ -484,7 +484,7 @@ def print_counties():
         else:
             print("'"+s+"'\t".expandtabs(32),end="")
     return cs
-  
+
 def get_county_population(county_state_country):
     """
     Get population of state (str or list)
@@ -492,16 +492,16 @@ def get_county_population(county_state_country):
     county_state_country_org = county_state_country;
     if not county_state_country.endswith(', US'):
         county_state_country = county_state_country+', US'
-    
+
     ds = pd.DataFrame(load_Counties()['death'])
-    
+
     ret = ds[ds['Combined_Key']==county_state_country]['Population'].iat[0]
-    
+
     if ret>0:
         pass
     else:
         ret = 100
-    return ret  
+    return ret
 
 
 # %% Load command, detect country, state, county
@@ -509,17 +509,17 @@ def load(csc):
     """
     Given a country/state name/abreviation (str or list), return a dictionary of dataframes with the data for that country/state as the key/s
     """
-    if isinstance(csc,list): 
+    if isinstance(csc,list):
         pass
     else:
         csc = [csc]
-    
+
     countries   = []
     states      = []
     counties    = []
-    
+
     for st in csc:
-        ab = get_state_abbreviation(st)    
+        ab = get_state_abbreviation(st)
         if (',' in st)&('Korea' not in st):
             counties.append(st)
         elif ((len(st)==2)& (st not in ['US','UK'])) | (ab!=st):
@@ -527,25 +527,25 @@ def load(csc):
         else:
             countries.append(st)
 
-    # print("countries") 
+    # print("countries")
     # print(countries)
     # print("states")
     # print(states)
     # print("counties")
     # print(counties)
-    
+
     out={}
-    
+
     if countries:
         out.update(load_country(countries))
-    
-    if states:  
+
+    if states:
         out.update(load_state(states))
-    
+
     if counties:
         out.update(load_county(counties))
 
-    
+
     # for st in states:
     #     ab = get_state_abbreviation(st)
     #     if (',' in st)&('Korea' not in st):
@@ -557,6 +557,4 @@ def load(csc):
     #     else:
     #         dfd[st] = load_country(st)
     #         dfd[st]['population'] = get_country_population(st)
-    return out 
-
-
+    return out
