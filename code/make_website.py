@@ -40,7 +40,6 @@ output_file.close();
 # Open the webpage to check it locally
 # webbrowser.open("file://"+os.path.abspath(html_file))
 
-
 # Post to the website
 os.system('git ca "Updated using ./code/make_website.py script on: '+now+'"'+'; git push')
 

@@ -13,8 +13,6 @@ import pickle
 
 # %% Get map data
 print("*** Loading Map Data...")
-# map_data_state  = gm.get_map_data(entity='state',resolution='high')
-# map_data_county = gm.get_map_data(entity='county',resolution='high')
 map_data_state  = gm.get_map_data(entity='state',resolution='low')
 map_data_county = gm.get_map_data(entity='county',resolution='low')
 

@@ -518,6 +518,7 @@ def load(csc):
     states      = []
     counties    = []
 
+    # Detect country/state/counties (to speed up batch loading of each category)
     for st in csc:
         ab = get_state_abbreviation(st)
         if (',' in st)&('Korea' not in st):
@@ -527,15 +528,8 @@ def load(csc):
         else:
             countries.append(st)
 
-    # print("countries")
-    # print(countries)
-    # print("states")
-    # print(states)
-    # print("counties")
-    # print(counties)
-
+    # Load all the countries/states/counties
     out={}
-
     if countries:
         out.update(load_country(countries))
 
@@ -544,17 +538,4 @@ def load(csc):
 
     if counties:
         out.update(load_county(counties))
-
-
-    # for st in states:
-    #     ab = get_state_abbreviation(st)
-    #     if (',' in st)&('Korea' not in st):
-    #         dfd[st] = load_county(ab)
-    #         dfd[st]['population'] = get_county_population(st)
-    #     elif ((len(st)==2)& (st not in ['US','UK'])) | (ab!=st):
-    #         dfd[st] = load_state(ab)
-    #         dfd[st]['population'] = get_state_population(st)
-    #     else:
-    #         dfd[st] = load_country(st)
-    #         dfd[st]['population'] = get_country_population(st)
     return out
