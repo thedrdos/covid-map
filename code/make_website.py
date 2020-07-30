@@ -24,7 +24,7 @@ html_file = "../site/index.html"
 # Read the markdown document and encoded it
 input_file = codecs.open(md_file, mode="r", encoding="utf-8")
 text = input_file.read()
-text = text+"\n--- Updated on "+now+"\n"
+text = text+"\n---\n Updated on "+now+"\n"
 
 # Make the webpage from the markdown
 html = markdown.markdown(text)
@@ -45,4 +45,4 @@ output_file.close();
 os.system('git ca "Updated using ./code/make_website.py script on: '+now+'"'+'; git push')
 
 # Open a webbrowser at the remote location
-webbrowser.open("https://covid-map.netlify.com")
+webbrowser.open("https://covid-interactive-map.netlify.com")
