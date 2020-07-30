@@ -18,4 +18,4 @@ Currently:
 
 * The Covid Tracking Project for US state data
 * John Hopkins University for county (and other) data
-* US Census Beauro for US geographical data
+* US Census Bureau for US geographical data

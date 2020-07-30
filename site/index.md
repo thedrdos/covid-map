@@ -1,0 +1,22 @@
+# Interactive Geographical Maps of COVID19 Data With Time History
+
+Well sourced COVID19 data with the following key features:
+
+* Interactive geographical heat map
+* Granularity (for US, both state and county level)
+* Normalization with respect to population (crude measure of societal pressure)
+
+## Maps
+* [4-month USA Map Standalone](plots/map_4mon_standalone.html) (large file, may take a few sec to load)
+
+## Implementation
+
+Code written in Python (and Javascript) to generate interactive html page.
+
+## Sources
+
+Currently:
+
+* The Covid Tracking Project for US state data
+* John Hopkins University for county (and other) data
+* US Census Bureau for US geographical data
