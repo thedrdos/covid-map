@@ -2,7 +2,7 @@
 
 Well sourced COVID19 data with the following key features:
 
-* Interactive geographical heat map
+* Interactive geographical heat map of the rate of virus spread
 * Granularity (for US, both state and county level)
 * Normalization with respect to population (crude measure of societal pressure)
 
