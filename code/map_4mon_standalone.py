@@ -50,7 +50,7 @@ import progress_bar as pbar
 
 # %% General plotting settings
 plot_settings = {
-    'toolbar_location':'above'
+    'toolbar_location':'left'
     }
 
 # %% Assign output file
@@ -572,7 +572,7 @@ color_bar = ColorBar(
     )
 # %% Make Buttons for state graph
 buttons = {}
-buttons['state_covid_data'] = Toggle(label="State Time History Graph",visible=False) #
+buttons['state_covid_data'] = Toggle(label="State Time History Graph",visible=False,button_type= 'primary') #
 buttons['state_covid_data'].js_on_change('active',CustomJS(args={'psc':psc},code="""
                   if (cb_obj.active == false){
                       cb_obj.label  = "Show State Time History Graph"
@@ -585,7 +585,7 @@ buttons['state_covid_data'].js_on_change('active',CustomJS(args={'psc':psc},code
                   """))
 
 
-buttons['county_covid_data'] = Toggle(label="County Time History Graph", visible=False) #
+buttons['county_covid_data'] = Toggle(label="Show County Time History Graph", visible=False,button_type= 'primary') #
 buttons['county_covid_data'].js_on_change('active',CustomJS(args={'pcc':pcc},code="""
                   if (cb_obj.active == false){
                       cb_obj.label  = "Show County Time History Graph"
@@ -597,11 +597,11 @@ buttons['county_covid_data'].js_on_change('active',CustomJS(args={'pcc':pcc},cod
                       }
                   """))
 
-buttons['reset_county_covid_data'] = Button(label="Reset County Time History Graph", visible=False, button_type='primary')
+buttons['reset_county_covid_data'] = Button(label="Reset County Time History Graph", visible=False, button_type='default')
 buttons['reset_county_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'pcc':pcc},code="""
                   pcc.reset.emit();
                   """))
-buttons['reset_state_covid_data'] = Button(label="Reset State Time History Graph", visible=False, button_type='primary')
+buttons['reset_state_covid_data'] = Button(label="Reset State Time History Graph", visible=False, button_type='default')
 buttons['reset_state_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'psc':psc},code="""
                   psc.reset.emit();
                   """))
@@ -655,18 +655,18 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
             var ind = cb_data.source.selected.indices[0]
             var state_name  = cb_data.source.data['state_name'][0]
             var county_name = cb_data.source.data['name'][ind]
-            var counte_state_name = county_name + ", "+state_name
+            var county_state_name = county_name + ", "+state_name
             var county_id = county_name + ", "+state_name+", US"
 
             for (var i=0; i< glyphs_covid_county.length; i++){
                 glyphs_covid_county[i].data_source.data = DS_Counties_COVID[county_id].data
                 glyphs_covid_county[i].data_source.change.emit();
                 }
-            pcc.visible = true
+            //pcc.visible = true
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
-            pcc.title.text = counte_state_name+": COVID data time history, population normalized"//  (Tap a county on the map above to show the corresponding data here)"
+            pcc.title.text = county_state_name+": COVID data time history, population normalized"//  (Tap a county on the map above to show the corresponding data here)"
         }
         console.log(county_id)
                        """)
@@ -752,6 +752,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
 
             p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
             p.visible   = true
+            p.title.text = state_name+": Tap a county to show the time history below."
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
@@ -776,7 +777,7 @@ heading = Div(text="""
 <p>Shows all the US states colored according to last weeks average number of new COVID-19 cases per day with state population normalization  (number of people per million).</p>
 <ul>
 	<li>Higher color number corresponds to faster spread of the virus.</li>
-    <li>On the top right of each graph thera are tools to zoom/pan/reset/save.</li>
+    <li>On the left of each graph thera are tools to zoom/pan/reset/save.</li>
 	<li>On Mobile: Use two finger to scroll the page.</li>
     <li>Data last updated on: {data_update} </li>
     <li>Graphs generated on: {graph_update} </li>
