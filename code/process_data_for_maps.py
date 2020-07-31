@@ -91,7 +91,7 @@ for n,data in enumerate(datas):
         df['recovered'] = df['recovered'].replace(0, float('NaN'))
 
         # Normalize to people per million (func of population)
-        columns_to_normalize = ['death','positiveActive','recovered','positive''hospitalizedCurrently','inIcuCurrently']
+        columns_to_normalize = ['death','positiveActive','recovered','positive','hospitalizedCurrently','inIcuCurrently']
         for c in columns_to_normalize:
             if c not in ['date','population']:
                 if c in df.keys():
