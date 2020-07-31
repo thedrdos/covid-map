@@ -10,7 +10,7 @@ echo "##########################################"
 python process_data_for_maps.py || exit 2
 
 echo "##########################################"
-echo "Running: map_demo_sandbox.py"
+echo "Running: map_4mon_standalone.py"
 echo "##########################################"
 python map_4mon_standalone.py || exit 3
 
