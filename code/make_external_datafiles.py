@@ -52,9 +52,66 @@ DS_Counties_COVID   = {}
 DS_Counties_map     = {}
 DS_States_map       = {}
 
+# States keys:
+# keys_covid_states = ['state',
+#  'positive',
+#  'negative',
+#  'pending',
+#  'hospitalizedCurrently',
+#  'hospitalizedCumulative',
+#  'inIcuCurrently',
+#  'inIcuCumulative',
+#  'onVentilatorCurrently',
+#  'onVentilatorCumulative',
+#  'recovered',
+#  'dataQualityGrade',
+#  'lastUpdateEt',
+#  'dateModified',
+#  'checkTimeEt',
+#  'death',
+#  'hospitalized',
+#  'dateChecked',
+#  'totalTestsViral',
+#  'positiveTestsViral',
+#  'negativeTestsViral',
+#  'positiveCasesViral',
+#  'deathConfirmed',
+#  'deathProbable',
+#  'fips',
+#  'positiveIncrease',
+#  'negativeIncrease',
+#  'total',
+#  'totalTestResults',
+#  'totalTestResultsIncrease',
+#  'posNeg',
+#  'deathIncrease',
+#  'hospitalizedIncrease',
+#  'hash',
+#  'commercialScore',
+#  'negativeRegularScore',
+#  'negativeScore',
+#  'positiveScore',
+#  'score',
+#  'grade',
+#  'positiveActive',
+#  'recovered_recorded',
+#  'Absolute_death',
+#  'Absolute_positiveActive',
+#  'Absolute_recovered',
+#  'Absolute_positive',
+#  'positive_increase',
+#  'positive_increase_mav',
+#  'positiveActive_increase',
+#  'positiveActive_increase_mav',
+#  'death_increase',
+#  'death_increase10_mav']
+
+
+
 keep_covid_data = {
     #'keys': ['death', 'positive', 'recovered', 'positiveActive', 'Absolute_death', 'Absolute_positiveActive', 'Absolute_recovered', 'Absolute_positive', 'positive_increase', 'positive_increase_mav', 'positiveActive_increase', 'positiveActive_increase_mav', 'death_increase', 'death_increase10_mav'],
-    'keys': ['death', 'recovered', 'positiveActive', 'positive_increase_mav', 'positiveActive_increase_mav', 'death_increase10_mav'],
+    #'keys': ['death', 'recovered', 'positiveActive', 'positive_increase_mav', 'positiveActive_increase_mav', 'death_increase10_mav'],
+    'keys': ['death', 'positive', 'recovered', 'positiveActive', 'Absolute_death', 'Absolute_positiveActive', 'Absolute_recovered', 'Absolute_positive', 'positive_increase', 'positive_increase_mav', 'positiveActive_increase', 'positiveActive_increase_mav', 'death_increase', 'death_increase10_mav','hospitalized','inIcuCurrently','Absolute_hospitalized','Absolute_inIcuCurrently'],
     'first_date':   pd.Timestamp.now()-pd.DateOffset(months=4), #pd.Timestamp.now()-pd.DateOffset(weeks=5),
     #'first_date':   pd.Timestamp.now()-pd.DateOffset(weeks=1), #pd.Timestamp.now()-pd.DateOffset(weeks=5),
     'last_date':    pd.Timestamp.now(),
@@ -73,7 +130,7 @@ for n,d in enumerate(DF_States_COVID):
     if len(DF_States_COVID[d]['positive'])>0:
         if max(DF_States_COVID[d]['positive'].values)>max_pos:
             max_pos = max_pos+10000
-    #DF_States_COVID[d] = DF_States_COVID[d][keep_covid_data['keys']].truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
+    DF_States_COVID[d] = DF_States_COVID[d][keep_covid_data['keys']].truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
     DS_States_COVID[d] = ColumnDataSource(DF_States_COVID[d])
 del DF_States_COVID
 
@@ -81,21 +138,21 @@ print('Converting Counties COVID Data...')
 N = len(DF_Counties_COVID)-1
 for n,d in enumerate(DF_Counties_COVID):
     pbar.progress_bar(n, N)
-    #DF_Counties_COVID[d] = DF_Counties_COVID[d][keep_covid_data['keys']].dropna().truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
+    DF_Counties_COVID[d] = DF_Counties_COVID[d][keep_covid_data['keys']].dropna().truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
     DS_Counties_COVID[d] = ColumnDataSource(DF_Counties_COVID[d])
 del DF_Counties_COVID
 
-print('Converting Counties map Data...')
-N = len(DI_Counties_map)-1
-for n,d in enumerate(DI_Counties_map):
-    pbar.progress_bar(n, N)
-    DS_Counties_map[d] = ColumnDataSource({k: DI_Counties_map[d][k] for k in keep_map_data['keys'] if k in DI_Counties_map[d].keys()})
-del DI_Counties_map
-
-print('Converting States COVID Data...')
-DS_States_map = ColumnDataSource({k: DI_States_map[k] for k in keep_map_data['keys'] if k in DI_States_map.keys()})
-pbar.progress_bar(1, 1)
-del DI_States_map
+# print('Converting Counties map Data...')
+# N = len(DI_Counties_map)-1
+# for n,d in enumerate(DI_Counties_map):
+#     pbar.progress_bar(n, N)
+#     DS_Counties_map[d] = ColumnDataSource({k: DI_Counties_map[d][k] for k in keep_map_data['keys'] if k in DI_Counties_map[d].keys()})
+# del DI_Counties_map
+#
+# print('Converting States COVID Data...')
+# DS_States_map = ColumnDataSource({k: DI_States_map[k] for k in keep_map_data['keys'] if k in DI_States_map.keys()})
+# pbar.progress_bar(1, 1)
+# del DI_States_map
 
 print('Conversions Completed.')
 
