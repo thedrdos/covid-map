@@ -19,6 +19,7 @@ The bash shell script `code/run_full_map_site_update.sh` runs all the necessary 
 * `process_data_for_maps.py`  Processes the data, calculating rates, averages, normalizations, and adding current stats to the geographical data, saving to temporary data files.
 * `python map_4mon_standalone.py` Makes the USA Map Standalone with 4-months of data history from the processed data.
 * `make_website.py` Makes the acompanying website (tied/synced from [Netlify](www.netlify.com) directly to [Github](www.github.com))
+* Normally takes about 5min to run (2.2GHz Intel Core i7, 16GB 2400 DDR4)
 
 
 ## Sources
