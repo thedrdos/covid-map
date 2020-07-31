@@ -1,6 +1,6 @@
 # Interactive Geographical Maps of COVID19 Data With Time History
 
-Main presentation page: [www.netlify.com/covid-map](www.netlify.com/covid-map)
+Main presentation page: [www.netlify.com/covid-interactive-map](www.netlify.com/covid-ineractive-map)
 
 * Interactive geographical heat map of the rate of virus spread
 * Granularity (for US, both state and county level)
