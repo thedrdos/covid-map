@@ -90,14 +90,14 @@ for n,data in enumerate(datas):
             df['recovered']=stmp.shift(rdays).fillna(0)-df['death']
         df['recovered'] = df['recovered'].replace(0, float('NaN'))
 
-
         # Normalize to people per million (func of population)
-        columns_to_normalize = ['death','positiveActive','recovered','positive']
+        columns_to_normalize = ['death','positiveActive','recovered','positive''hospitalizedCurrently','inIcuCurrently']
         for c in columns_to_normalize:
             if c not in ['date','population']:
-                if np.issubdtype(df[c].dtype,np.number):
-                    df['Absolute_'+c] = df[c]
-                    df[c] = df[c]/data[k]['population']*1000000
+                if c in df.keys():
+                    if np.issubdtype(df[c].dtype,np.number):
+                        df['Absolute_'+c] = df[c]
+                        df[c] = df[c]/data[k]['population']*1000000
 
         # Calculate actual and averaged increase
         df['positive_increase'] = df['positive'].rolling(2).apply(pdiff)
