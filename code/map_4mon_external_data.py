@@ -851,6 +851,15 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name]
             console.log(datafilename)
 
+            function update_covid_graph(from_datafile){
+                for (var i=0; i< glyphs_covid_state.length; i++){
+                    glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
+                    glyphs_covid_state[i].data_source.change.emit();
+                    }
+                p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
+                p.visible   = true
+            }
+
             $.getJSON(datafilename)
                 .done(function(data){
                     // Action if datafile found and read
@@ -861,14 +870,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 }).fail(function(jqXHR, testStatus, err){
                     // Add actions here to react to a failure to find data file
                 });
-            function update_covid_graph(from_datafile){
-                for (var i=0; i< glyphs_covid_state.length; i++){
-                    glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
-                    glyphs_covid_state[i].data_source.change.emit();
-                    }
-                p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
-                p.visible   = true
-            }
+
 
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
