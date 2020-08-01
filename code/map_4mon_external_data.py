@@ -5,13 +5,13 @@ Created Jul 2020
 
 @author: TheDrDOS
 """
-# Clear the Spyder console and variables
-try:
-    from IPython import get_ipython
-    get_ipython().magic('clear')
-    get_ipython().magic('reset -f')
-except:
-    pass
+# # Clear the Spyder console and variables
+# try:
+#     from IPython import get_ipython
+#     get_ipython().magic('clear')
+#     get_ipython().magic('reset -f')
+# except:
+#     pass
 
 
 from bokeh.io import show, save, output_file
@@ -840,6 +840,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name]
             console.log(datafilename)
 
+            console.log("Using jquary to fetch data")
             $.getJSON(datafilename,function(from_datafile){
                 console.log('Read file: '+datafilename)
                 console.log(from_datafile)
@@ -850,7 +851,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 console.log('Updated to contents of: '+datafilename)
             });
 
-
+            console.log("Updating the state map")
             patches_counties.data_source.data = DS_Counties_map[state_name].data
             patches_counties.data_source.change.emit(); // Update the county patches
             p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
