@@ -159,11 +159,11 @@ for d in DS_States_COVID:
     for k in DS_States_COVID[d].data.keys():
         dic[k] = DS_States_COVID[d].data[k][-2:-1]
     DS_States_COVID[d] = ColumnDataSource(dic)
-for d in DS_Counties_map:
+for d in DS_Counties_COVID:
     dic = {}
-    for k in DS_Counties_map[d].data.keys():
-        dic[k] = DS_Counties_map[d].data[k][-2:-1]
-    DS_Counties_map[d] = ColumnDataSource(dic)
+    for k in DS_Counties_COVID[d].data.keys():
+        dic[k] = DS_Counties_COVID[d].data[k][-2:-1]
+    DS_Counties_COVID[d] = ColumnDataSource(dic)
 """
 # %% Load key_to_filename
 ________________________________________________________________________________
