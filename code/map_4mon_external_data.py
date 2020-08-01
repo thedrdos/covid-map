@@ -14,7 +14,8 @@ except:
     pass
 
 
-from bokeh.io import show, output_file
+from bokeh.io import show, save, output_file
+from bokeh.util.browser import view
 from bokeh.models import ColorBar, ColorMapper, LogColorMapper,LogTicker, LinearColorMapper
 from bokeh.models import BasicTicker as LinearTicker
 from bokeh.models import BasicTickFormatter, LogTicker, FixedTicker, FuncTickFormatter
@@ -48,12 +49,23 @@ import pandas as pd
 import pickle
 import progress_bar as pbar
 
+import json
+from bokeh_template_external_js import template as template_ext_js
+
 # %% General plotting settings
+"""
+# %% General plotting settings
+________________________________________________________________________________
+"""
 plot_settings = {
     'toolbar_location':'above'
     }
 
 # %% Assign output file
+"""
+# %% Assign output file
+________________________________________________________________________________
+"""
 def filename(fullname):
     """ Return the name of a file without its path or extension"""
     return os.path.splitext(os.path.split(fullname)[1])[0]
@@ -61,6 +73,10 @@ output_filename = "../site/plots/"+os.path.basename(os.path.splitext(__file__)[0
 output_file(output_filename+".html",title=filename(output_filename))
 
 # %% Get data
+"""
+# %%  Get data
+________________________________________________________________________________
+"""
 data_path = './tmp_data/'
 print('*** Load Processed Data From: '+data_path)
 pbar.progress_bar(0,4)
@@ -74,6 +90,10 @@ DI_Counties_map   = pickle.load(open(data_path+"DI_Counties_map.p","rb"))
 pbar.progress_bar(4,4)
 
 # %% Convert into ColumnDataSource
+"""
+# %% Convert into ColumnDataSource
+________________________________________________________________________________
+"""
 print('*** Convert Data into ColumnDataSource')
 DS_States_COVID     = {}
 DS_Counties_COVID   = {}
@@ -81,10 +101,8 @@ DS_Counties_map     = {}
 DS_States_map       = {}
 
 keep_covid_data = {
-    #'keys': ['death', 'positive', 'recovered', 'positiveActive', 'Absolute_death', 'Absolute_positiveActive', 'Absolute_recovered', 'Absolute_positive', 'positive_increase', 'positive_increase_mav', 'positiveActive_increase', 'positiveActive_increase_mav', 'death_increase', 'death_increase10_mav'],
     'keys': ['death', 'recovered', 'positiveActive', 'positive_increase_mav', 'positiveActive_increase_mav', 'death_increase10_mav'],
-    'first_date':   pd.Timestamp.now()-pd.DateOffset(months=4), #pd.Timestamp.now()-pd.DateOffset(weeks=5),
-    #'first_date':   pd.Timestamp.now()-pd.DateOffset(weeks=1), #pd.Timestamp.now()-pd.DateOffset(weeks=5),
+    'first_date':   pd.Timestamp.now()-pd.DateOffset(months=4),
     'last_date':    pd.Timestamp.now(),
     }
 
@@ -103,6 +121,8 @@ for n,d in enumerate(DF_States_COVID):
             max_pos = max_pos+10000
     DF_States_COVID[d] = DF_States_COVID[d][keep_covid_data['keys']].truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
     DS_States_COVID[d] = ColumnDataSource(DF_States_COVID[d])
+    if n==0:
+        break
 del DF_States_COVID
 
 print('Converting Counties COVID Data...')
@@ -111,6 +131,8 @@ for n,d in enumerate(DF_Counties_COVID):
     pbar.progress_bar(n, N)
     DF_Counties_COVID[d] = DF_Counties_COVID[d][keep_covid_data['keys']].dropna().truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
     DS_Counties_COVID[d] = ColumnDataSource(DF_Counties_COVID[d])
+    if n==0:
+        break
 del DF_Counties_COVID
 
 print('Converting Counties map Data...')
@@ -127,12 +149,42 @@ del DI_States_map
 
 print('Conversions Completed.')
 
-# %% 
+
+"""
+# %% Empty the COVID data structures, since they won't be used (will use ext_data json files)
+________________________________________________________________________________
+"""
+for d in DS_States_COVID:
+    dic = {}
+    for k in DS_States_COVID[d].data.keys():
+        dic[k] = DS_States_COVID[d].data[k][-2:-1]
+    DS_States_COVID[d] = ColumnDataSource(dic)
+for d in DS_Counties_map:
+    dic = {}
+    for k in DS_Counties_map[d].data.keys():
+        dic[k] = DS_Counties_map[d].data[k][-2:-1]
+    DS_Counties_map[d] = ColumnDataSource(dic)
+"""
+# %% Load key_to_filename
+________________________________________________________________________________
+"""
+ext_datafiles = {}
+with open('../site/ext_data/key_to_filename.json') as f:
+    ext_datafiles['key_to_filename'] = json.load(f)
+ext_datafiles['path'] = '../ext_data/'
 
 # %% Select first state to view
-state_name = 'Ohio'
+"""
+# %% Select first state to view
+________________________________________________________________________________
+"""
+state_name = next(iter(DS_States_COVID)) # get first key, i.e. state name
 
 # %% Make State graph for COVID data
+"""
+# %% Make State graph for COVID data
+________________________________________________________________________________
+"""
 # Define the initia source
 source  = ColumnDataSource(DS_States_COVID[state_name].data)
 
@@ -312,6 +364,10 @@ glyphs_covid_state = glyphs
 glyphs = []
 
 # %% Make County graph for COVID data
+"""
+# %% Make County graph for COVID data
+________________________________________________________________________________
+"""
 # Define the initia source
 source  = ColumnDataSource(DS_States_COVID[state_name].data)
 
@@ -492,6 +548,10 @@ glyphs_covid_county = glyphs
 glyphs = []
 
 # %% Setup map of all counties
+"""
+%% Setup map of all counties
+________________________________________________________________________________
+"""
 def Reverse(tuples):
     new_tup = tuples[::-1]
     return new_tup
@@ -573,6 +633,10 @@ color_bar = ColorBar(
     major_label_text_align = 'left',
     )
 # %% Make Buttons for state graph
+"""
+# %% Make Buttons for state graph
+________________________________________________________________________________
+"""
 buttons = {}
 buttons['state_covid_data'] = Toggle(label="State Time History Graph",visible=False) #
 buttons['state_covid_data'].js_on_change('active',CustomJS(args={'psc':psc},code="""
@@ -609,6 +673,10 @@ buttons['reset_state_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={
                   """))
 
 # %% Make map of all counties
+"""
+# %% Make map of all counties
+________________________________________________________________________________
+"""
 p = figure(
     title="(Tap a county on the map above to show the corresponding data here)",
     tools= "pan,wheel_zoom,tap,reset,hover,save",active_tap='tap',
@@ -647,7 +715,8 @@ p.add_layout(color_bar, 'right')
 # Add taptool to select from which state to show all the counties
 callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
                              'glyphs_covid_county':glyphs_covid_county,
-                             'DS_Counties_COVID':DS_Counties_COVID,
+                             #'DS_Counties_COVID':DS_Counties_COVID,
+                             'ext_datafiles': ext_datafiles,
                              'pcc': pcc,
                              'tb':[buttons['county_covid_data'],buttons['reset_county_covid_data']],
                              },
@@ -660,8 +729,17 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
             var counte_state_name = county_name + ", "+state_name
             var county_id = county_name + ", "+state_name+", US"
 
+            var datafilename = ext_datafiles['path']+ext_datafiles[county_id]
+
+            var from_datafile
+            $.getJSON(datafilename, function(data) { // This will not work on local files
+              from_datafile = data
+            })
+
+            file_data = keys_to_filename[county_id]
+
             for (var i=0; i< glyphs_covid_county.length; i++){
-                glyphs_covid_county[i].data_source.data = DS_Counties_COVID[county_id].data
+                glyphs_covid_county[i].data_source.data = from_datafile['data'] //DS_Counties_COVID[county_id].data
                 glyphs_covid_county[i].data_source.change.emit();
                 }
             pcc.visible = true
@@ -676,6 +754,10 @@ taptool = p.select(type=TapTool)
 taptool.callback = callbacktap
 
 #%% Make County map buttons
+"""
+# %% Make map of all counties
+________________________________________________________________________________
+"""
 buttons['reset_county_map'] = Button(label="Reset Map of Counties", visible=False, button_type='warning')
 buttons['reset_county_map'].js_on_event(events.ButtonClick,CustomJS(args={'p':p},code="""
                   p.reset.emit();
@@ -683,6 +765,10 @@ buttons['reset_county_map'].js_on_event(events.ButtonClick,CustomJS(args={'p':p}
 
 
 # %% Make the States map
+"""
+# %% Make the States map
+________________________________________________________________________________
+"""
 def minmax(xx):
     minxx = np.nanmin([np.nanmin(x) for x in xx])
     maxxx = np.nanmax([np.nanmax(x) for x in xx])
@@ -734,7 +820,8 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                              'index_to_state_name':DS_States_map.data['name'],
                              'DS_Counties_map':DS_Counties_map,
                              'glyphs_covid_state':glyphs_covid_state,
-                             'DS_States_COVID':DS_States_COVID,
+                             #'DS_States_COVID':DS_States_COVID,
+                             'ext_datafiles':ext_datafiles,
                              'p':p,
                              'psc':psc, # state covid data plot
                              'tb':[buttons['state_covid_data'],buttons['reset_state_covid_data'],buttons['reset_county_map']],
@@ -747,8 +834,15 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             patches_counties.data_source.data = DS_Counties_map[state_name].data
             patches_counties.data_source.change.emit(); // Update the county patches
 
+            var datafilename = ext_datafiles['path']+ext_datafiles[state_name]
+
+            var from_datafile
+            $.getJSON(datafilename, function(data) { // This will not work on local files
+              from_datafile = data
+            })
+
             for (var i=0; i< glyphs_covid_state.length; i++){
-                glyphs_covid_state[i].data_source.data = DS_States_COVID[state_name].data
+                glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
                 glyphs_covid_state[i].data_source.change.emit();
                 }
 
@@ -766,6 +860,10 @@ taptool = ps.select(type=TapTool)
 taptool.callback = callbacktap
 
 #%% Make State map buttons
+"""
+#%% Make State map buttons
+________________________________________________________________________________
+"""
 buttons['reset_state_map'] = Button(label="Reset Map of States", visible=True, button_type='warning')
 buttons['reset_state_map'].js_on_event(events.ButtonClick,CustomJS(args={'ps':ps},code="""
                   ps.reset.emit();
@@ -773,6 +871,9 @@ buttons['reset_state_map'].js_on_event(events.ButtonClick,CustomJS(args={'ps':ps
 
 
 # %% Make heading for the whole thing
+"""
+# %% Make heading for the whole thing
+"""
 heading = Div(text="""
 <h1> US State And County Maps Of COVID Data With Population Normalized Time History </h1>
 <p>Shows all the US states colored according to last weeks average number of new COVID-19 cases per day with state population normalization  (number of people per million).</p>
@@ -787,7 +888,7 @@ heading = Div(text="""
 
 <h3> Tap on any state to show same kind of map of all counties below </h3>
 """.format(
-    data_update = pd.to_datetime(DS_States_COVID['California'].data['date'][-1]).strftime('%Y-%m-%d'),
+    data_update = pd.to_datetime(DS_States_COVID[state_name].data['date'][-1]).strftime('%Y-%m-%d'),
     graph_update =pd.Timestamp.now().strftime('%Y-%m-%d'),
     ))
 
@@ -806,6 +907,10 @@ footer = Div(text="""
 
 
 # %% Combine all the graphs
+"""
+# %% Combine all the graphs
+________________________________________________________________________________
+"""
 
 # Layout the figures and show them
 ps.sizing_mode = 'scale_width'
@@ -828,4 +933,5 @@ layout = column(heading,
                 footer,
                 sizing_mode='scale_width')
 layout.margin = (0,24,0,24) # top, right, bottom, left
-show(layout)
+save(layout,template=template_ext_js('jquary'))
+view(output_filename+'.html')
