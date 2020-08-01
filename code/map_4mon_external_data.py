@@ -751,7 +751,7 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
                     }
             }
 
-            pcc.visible = true
+            //pcc.visible = true
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
@@ -834,6 +834,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                              'p':p,
                              'psc':psc, # state covid data plot
                              'tb':[buttons['state_covid_data'],buttons['reset_state_covid_data'],buttons['reset_county_map']],
+                             'datetime_made': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                              },
                        code="""
 
@@ -843,6 +844,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             patches_counties.data_source.data = DS_Counties_map[state_name].data
             patches_counties.data_source.change.emit(); // Update the county patches
 
+            console.log('This file was made on: '+datetime_made)
             console.log(state_name)
             console.log(ext_datafiles['path'])
             console.log(ext_datafiles['key_to_filename'][state_name])
@@ -864,10 +866,10 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                     glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
                     glyphs_covid_state[i].data_source.change.emit();
                     }
+                p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
+                p.visible   = true
             }
 
-            p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
-            p.visible   = true
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
