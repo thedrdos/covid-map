@@ -729,7 +729,10 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
             var counte_state_name = county_name + ", "+state_name
             var county_id = county_name + ", "+state_name+", US"
 
-            var datafilename = ext_datafiles['path']+ext_datafiles[county_id]
+            console.log(county_id)
+            console.log(ext_datafiles['path'])
+            console.log(ext_datafiles['key_to_filename'][county_id])
+            var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][county_id]
 
             var from_datafile
             console.log(datafilename)
@@ -836,8 +839,12 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             patches_counties.data_source.data = DS_Counties_map[state_name].data
             patches_counties.data_source.change.emit(); // Update the county patches
 
-            var datafilename = ext_datafiles['path']+ext_datafiles[state_name]
+            console.log(state_name)
+            console.log(ext_datafiles['path'])
+            console.log(ext_datafiles['key_to_filename'][state_name])
+            var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'] [state_name]
             console.log(datafilename)
+
             var from_datafile
             $.getJSON(datafilename, function(data) { // This will not work on local files
               from_datafile = data
