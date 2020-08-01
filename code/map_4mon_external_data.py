@@ -171,7 +171,7 @@ ________________________________________________________________________________
 ext_datafiles = {}
 with open('../site/ext_data/key_to_filename.json') as f:
     ext_datafiles['key_to_filename'] = json.load(f)
-ext_datafiles['path'] = '../ext_data/'
+ext_datafiles['path'] = '/ext_data/'
 
 # %% Select first state to view
 """
