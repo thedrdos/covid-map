@@ -734,19 +734,23 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
             console.log(ext_datafiles['key_to_filename'][county_id])
             var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][county_id]
 
-            var from_datafile
-            console.log(datafilename)
-            $.getJSON(datafilename, function(data) { // This will not work on local files
-              from_datafile = data
-            })
-            console.log(from_datafile)
+            $.getJSON(datafilename)
+                .done(function(data){
+                    // Action if datafile found and read
+                    console.log('json file successfully read')
+                    update_covid_graph(data)
+                    console.log('covid graph updated')
 
-            file_data = keys_to_filename[county_id]
+                }).fail(function(jqXHR, testStatus, err){
+                    // Add actions here to react to a failure to find data file
+                });
+            function update_covid_graph(from_datafile){
+                for (var i=0; i< glyphs_covid_state.length; i++){
+                    glyphs_covid_county[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
+                    glyphs_covid_county[i].data_source.change.emit();
+                    }
+            }
 
-            for (var i=0; i< glyphs_covid_county.length; i++){
-                glyphs_covid_county[i].data_source.data = from_datafile['data'] //DS_Counties_COVID[county_id].data
-                glyphs_covid_county[i].data_source.change.emit();
-                }
             pcc.visible = true
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
@@ -842,20 +846,25 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             console.log(state_name)
             console.log(ext_datafiles['path'])
             console.log(ext_datafiles['key_to_filename'][state_name])
-            var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'] [state_name]
+            var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name]
             console.log(datafilename)
 
-            var from_datafile
-            $.getJSON(datafilename, function(data) { // This will not work on local files
-              from_datafile = data
-            })
-            console.log(datafilename)
-            console.log(from_datafile)
+            $.getJSON(datafilename)
+                .done(function(data){
+                    // Action if datafile found and read
+                    console.log('json file successfully read')
+                    update_covid_graph(data)
+                    console.log('covid graph updated')
 
-            for (var i=0; i< glyphs_covid_state.length; i++){
-                glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
-                glyphs_covid_state[i].data_source.change.emit();
-                }
+                }).fail(function(jqXHR, testStatus, err){
+                    // Add actions here to react to a failure to find data file
+                });
+            function update_covid_graph(from_datafile){
+                for (var i=0; i< glyphs_covid_state.length; i++){
+                    glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
+                    glyphs_covid_state[i].data_source.change.emit();
+                    }
+            }
 
             p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
             p.visible   = true
