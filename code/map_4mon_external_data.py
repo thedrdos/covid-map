@@ -735,6 +735,8 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
             $.getJSON(datafilename, function(data) { // This will not work on local files
               from_datafile = data
             })
+            console.log(datafilename)
+            console.log(from_datafile)
 
             file_data = keys_to_filename[county_id]
 
@@ -840,6 +842,8 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             $.getJSON(datafilename, function(data) { // This will not work on local files
               from_datafile = data
             })
+            console.log(datafilename)
+            console.log(from_datafile)
 
             for (var i=0; i< glyphs_covid_state.length; i++){
                 glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
