@@ -843,10 +843,18 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             function rep_nan_code(dic,nan_code){
                 var inds
                 for (var key in dic){
-                        inds = dic[key].findIndex((el) => el === nan_code);
-                        dic[key][inds] = NaN;
+                        dic[key] = array_element_replace(dic[key],nan_code,NaN)
                 }
                 return dic;
+            }
+
+            function array_element_replace(arr, old_value, new_value) {
+                for (var i = 0; i < arr.length; i++) {
+                    if (arr[i] === old_value) {
+                      arr[i] = new_value;
+                    }
+                    }
+                return arr;
             }
 
             console.log("Using jquary to fetch data")
