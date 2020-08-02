@@ -843,7 +843,8 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             function rep_nan_code(dic,nan_code){
                 var inds
                 for (var key in dic){
-                        dic[key] = array_element_replace(dic[key],nan_code,NaN)
+                        //dic[key] = array_element_replace(dic[key],nan_code,NaN)
+                        dic[key] = array_element_replace(dic[key],nan_code,-1)
                 }
                 return dic;
             }
