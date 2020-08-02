@@ -149,6 +149,8 @@ state_name = 'Ohio' # get first key, i.e. state name
 with open(ext_datafiles_path+ext_datafiles['key_to_filename'][state_name]) as f:
     init_data = json.load(f)['data']
 init_data['date'] = pd.to_datetime(init_data['date'])
+
+latest_data_date = max(init_data['date'])
 # Reduce the initial dataset to save Spacer
 for k in init_data:
     init_data[k] = init_data[k][0:1]
@@ -977,7 +979,7 @@ heading = Div(text="""
 
 <h3> Tap on any state to show same kind of map of all counties below </h3>
 """.format(
-    data_update = pd.to_datetime(DS_States_COVID[state_name].data['date'][-1]).strftime('%Y-%m-%d'),
+    data_update = pd.to_datetime(latest_data_date).strftime('%Y-%m-%d'),
     graph_update =pd.Timestamp.now().strftime('%Y-%m-%d'),
     ))
 
