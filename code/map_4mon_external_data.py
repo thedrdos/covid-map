@@ -148,7 +148,7 @@ ________________________________________________________________________________
 state_name = 'Ohio' # get first key, i.e. state name
 with open(ext_datafiles_path+ext_datafiles['key_to_filename'][state_name]) as f:
     init_data = json.load(f)['data']
-
+init_data['date'] = pd.to_datetime(init_data['date'])
 DS_States_COVID[state_name] = ColumnDataSource(init_data)
 # %% Make State graph for COVID data
 """
@@ -175,7 +175,7 @@ ax_limits = {
 # Make the bar and line plots
 glyphs = []
 
-psc = figure(x_axis_type='datetime',y_axis_type="linear",
+p_state_covid = figure(x_axis_type='datetime',y_axis_type="linear",
     title='(Tap a state on the map above to show the corresponding COVID data here)',
     #plot_width=800, plot_height=600,
     tools="pan,wheel_zoom,box_zoom,reset", active_scroll=None, active_drag='pan',
@@ -200,7 +200,7 @@ yleft = {
     'limits': ax_limits['yl'],
     }
 yleft['name']=yleft['y']
-vg = psc.vbar_stack(
+vg = p_state_covid.vbar_stack(
         x=yleft['x'], stackers=yleft['y'], color=yleft['color'],
         legend_label=yleft['legend_label'],
         source=yleft['source'],
@@ -210,9 +210,9 @@ vg = psc.vbar_stack(
         )
 glyphs = glyphs + [g for g in vg]
 
-psc.yaxis.axis_label = yleft['label']
-psc.yaxis.formatter=NumeralTickFormatter(format="0,0.0")
-psc.y_range = Range1d(start=yleft['limits'][0],end=yleft['limits'][1])#, bounds=yleft['limits'])
+p_state_covid.yaxis.axis_label = yleft['label']
+p_state_covid.yaxis.formatter=NumeralTickFormatter(format="0,0.0")
+p_state_covid.y_range = Range1d(start=yleft['limits'][0],end=yleft['limits'][1])#, bounds=yleft['limits'])
 
 # Setup for Y right axis:
 yright = {
@@ -249,13 +249,13 @@ for n,y in enumerate(yright_each['y']):
 
 
 # Make Y Right Axis:
-psc.extra_y_ranges[yright['y_range_name']] = Range1d(start=yright['limits'][0],end=yright['limits'][1])
-psc.add_layout(LinearAxis(y_range_name=yright['y_range_name']), "right")
-psc.yaxis[1].axis_label = yright['label']
+p_state_covid.extra_y_ranges[yright['y_range_name']] = Range1d(start=yright['limits'][0],end=yright['limits'][1])
+p_state_covid.add_layout(LinearAxis(y_range_name=yright['y_range_name']), "right")
+p_state_covid.yaxis[1].axis_label = yright['label']
 
 for n,y in enumerate(yright_each['y']):
     glyphs.append(
-        psc.line(
+        p_state_covid.line(
             y_range_name=yright['y_range_name'],
             source=yright['source'],
             x=yright['x'],
@@ -276,7 +276,7 @@ zero_span = Span(
                     line_dash='solid', line_width=3, line_alpha=0.4,
                     y_range_name=yright['y_range_name']
                     )
-psc.add_layout(zero_span)
+p_state_covid.add_layout(zero_span)
 
 # Weekly span marks
 ds = np.arange(ax_limits['x'][0],ax_limits['x'][1],dtype='datetime64[D]');
@@ -285,7 +285,7 @@ for d in ds:
     if ((np.timedelta64(ds.max()-d,timezone=None)/day)%7)==0:
             ts = (np.datetime64(d,timezone=None) - np.datetime64('1970-01-01T00:00:00',timezone=None)) / np.timedelta64(1, 's',timezone=None)
             wloc = ts*1000 # get the week mark location in a format compatible with annotations
-            psc.add_layout(
+            p_state_covid.add_layout(
                 Span(location=wloc,
                       dimension='height', line_color='gray',
                       line_dash='dashed', line_width=2, line_alpha=0.5,
@@ -294,20 +294,20 @@ for d in ds:
 
 # # X axis formatting:
 # mm = [source.data['date'].min()- np.timedelta64(1,'D'), source.data['date'].max()+- np.timedelta64(1,'D')]
-psc.x_range = Range1d( # Set the range of the axis
+p_state_covid.x_range = Range1d( # Set the range of the axis
     ax_limits['x'][0],ax_limits['x'][1],bounds=ax_limits['x']
  )
-# #psc.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
-psc.xaxis.major_label_orientation = -np.pi/3 # slant the labels
+# #p_state_covid.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
+p_state_covid.xaxis.major_label_orientation = -np.pi/3 # slant the labels
 dtformat = "%b-%d";
-psc.xaxis.formatter=formatter=DatetimeTickFormatter( # Always show the same date formatting regardless of zoom
+p_state_covid.xaxis.formatter=formatter=DatetimeTickFormatter( # Always show the same date formatting regardless of zoom
     days=dtformat,
     months=dtformat,
     hours=dtformat,
     minutes=dtformat)
 
 # Add legend
-psc.legend.location = "top_left"
+p_state_covid.legend.location = "top_left"
 
 # Add a hover tool
 hover = HoverTool()
@@ -321,14 +321,14 @@ hover.formatters={
         '$name'     : 'printf' # use 'printf' formatter for the name of the column
     }
 hover.renderers = glyphs
-psc.add_tools(hover)
+p_state_covid.add_tools(hover)
 
 # # Extra formatting
-# for ax in psc.yaxis:
+# for ax in p_state_covid.yaxis:
 #     ax.axis_label_text_font_style = 'bold'
 #     ax.axis_label_text_font_size = '16pt'
-# psc.title.text_font_size = '20pt'
-# psc.title.text_font_style = 'italic'
+# p_state_covid.title.text_font_size = '20pt'
+# p_state_covid.title.text_font_style = 'italic'
 
 glyphs_covid_state = glyphs
 glyphs = []
@@ -359,7 +359,7 @@ ax_limits = {
 # Make the bar and line plots
 glyphs = []
 
-pcc = figure(x_axis_type='datetime',y_axis_type="linear",
+p_county_covid = figure(x_axis_type='datetime',y_axis_type="linear",
     title='Tap a county on the map above to show the corresponding population normalized COVID data time history',
     #plot_width=800, plot_height=600,
     tools="pan,wheel_zoom,box_zoom,reset", active_scroll=None, active_drag='pan',
@@ -384,7 +384,7 @@ yleft = {
     'limits': ax_limits['yl'],
     }
 yleft['name']=yleft['y']
-vg = pcc.vbar_stack(
+vg = p_county_covid.vbar_stack(
         x=yleft['x'], stackers=yleft['y'], color=yleft['color'],
         legend_label=yleft['legend_label'],
         source=yleft['source'],
@@ -394,9 +394,9 @@ vg = pcc.vbar_stack(
         )
 glyphs = glyphs + [g for g in vg]
 
-pcc.yaxis.axis_label = yleft['label']
-pcc.yaxis.formatter=NumeralTickFormatter(format="0,0.0")
-pcc.y_range = Range1d(start=yleft['limits'][0],end=yleft['limits'][1])#, bounds=yleft['limits'])
+p_county_covid.yaxis.axis_label = yleft['label']
+p_county_covid.yaxis.formatter=NumeralTickFormatter(format="0,0.0")
+p_county_covid.y_range = Range1d(start=yleft['limits'][0],end=yleft['limits'][1])#, bounds=yleft['limits'])
 
 # Setup for Y right axis:
 yright = {
@@ -433,13 +433,13 @@ for n,y in enumerate(yright_each['y']):
 
 
 # Make Y Right Axis:
-pcc.extra_y_ranges[yright['y_range_name']] = Range1d(start=yright['limits'][0],end=yright['limits'][1])
-pcc.add_layout(LinearAxis(y_range_name=yright['y_range_name']), "right")
-pcc.yaxis[1].axis_label = yright['label']
+p_county_covid.extra_y_ranges[yright['y_range_name']] = Range1d(start=yright['limits'][0],end=yright['limits'][1])
+p_county_covid.add_layout(LinearAxis(y_range_name=yright['y_range_name']), "right")
+p_county_covid.yaxis[1].axis_label = yright['label']
 
 for n,y in enumerate(yright_each['y']):
     glyphs.append(
-        pcc.line(
+        p_county_covid.line(
             y_range_name=yright['y_range_name'],
             source=yright['source'],
             x=yright['x'],
@@ -460,7 +460,7 @@ zero_span = Span(
                     line_dash='solid', line_width=3, line_alpha=0.4,
                     y_range_name=yright['y_range_name']
                     )
-pcc.add_layout(zero_span)
+p_county_covid.add_layout(zero_span)
 
 # Weekly span marks
 ds = np.arange(ax_limits['x'][0],ax_limits['x'][1],dtype='datetime64[D]');
@@ -469,7 +469,7 @@ for d in ds:
     if ((np.timedelta64(ds.max()-d,timezone=None)/day)%7)==0:
             ts = (np.datetime64(d,timezone=None) - np.datetime64('1970-01-01T00:00:00',timezone=None)) / np.timedelta64(1, 's',timezone=None)
             wloc = ts*1000 # get the week mark location in a format compatible with annotations
-            pcc.add_layout(
+            p_county_covid.add_layout(
                 Span(location=wloc,
                       dimension='height', line_color='gray',
                       line_dash='dashed', line_width=2, line_alpha=0.5,
@@ -478,20 +478,20 @@ for d in ds:
 
 # # X axis formatting:
 # mm = [source.data['date'].min()- np.timedelta64(1,'D'), source.data['date'].max()+- np.timedelta64(1,'D')]
-pcc.x_range = Range1d( # Set the range of the axis
+p_county_covid.x_range = Range1d( # Set the range of the axis
     ax_limits['x'][0],ax_limits['x'][1],bounds=ax_limits['x']
  )
-# #pcc.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
-pcc.xaxis.major_label_orientation = -np.pi/3 # slant the labels
+# #p_county_covid.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
+p_county_covid.xaxis.major_label_orientation = -np.pi/3 # slant the labels
 dtformat = "%b-%d";
-pcc.xaxis.formatter=formatter=DatetimeTickFormatter( # Always show the same date formatting regardless of zoom
+p_county_covid.xaxis.formatter=formatter=DatetimeTickFormatter( # Always show the same date formatting regardless of zoom
     days=dtformat,
     months=dtformat,
     hours=dtformat,
     minutes=dtformat)
 
 # Add legend
-pcc.legend.location = "top_left"
+p_county_covid.legend.location = "top_left"
 
 # Add a hover tool
 hover = HoverTool()
@@ -505,14 +505,14 @@ hover.formatters={
         '$name'     : 'printf' # use 'printf' formatter for the name of the column
     }
 hover.renderers = glyphs
-pcc.add_tools(hover)
+p_county_covid.add_tools(hover)
 
 # Extra formatting
-# for ax in pcc.yaxis:
+# for ax in p_county_covid.yaxis:
 #     ax.axis_label_text_font_style = 'bold'
 #     ax.axis_label_text_font_size = '16pt'
-# pcc.title.text_font_size = '20pt'
-# pcc.title.text_font_style = 'italic'
+# p_county_covid.title.text_font_size = '20pt'
+# p_county_covid.title.text_font_style = 'italic'
 
 glyphs_covid_county = glyphs
 glyphs = []
@@ -585,7 +585,7 @@ def make_color_mapper_and_ticks(palette,low=0,high=1,tick_decimals = 2, label_fo
     return out
 
 # Make colormap
-#palette = tuple([p for p in palette]+['#ffffee'])
+#palette = tuple([p_county_map for p_county_map in palette]+['#ffffee'])
 # palette = Reverse(Inferno256[128:-1:5])
 palette = Turbo256[128:-1:5]
 
@@ -609,37 +609,37 @@ ________________________________________________________________________________
 """
 buttons = {}
 buttons['state_covid_data'] = Toggle(label="State Time History Graph",visible=False) #
-buttons['state_covid_data'].js_on_change('active',CustomJS(args={'psc':psc},code="""
+buttons['state_covid_data'].js_on_change('active',CustomJS(args={'p_state_covid':p_state_covid},code="""
                   if (cb_obj.active == false){
                       cb_obj.label  = "Show State Time History Graph"
-                      psc.visible = false
+                      p_state_covid.visible = false
                   }
                   else{
                       cb_obj.label  = "Hide State Time History Graph"
-                      psc.visible = true
+                      p_state_covid.visible = true
                       }
                   """))
 
 
 buttons['county_covid_data'] = Toggle(label="County Time History Graph", visible=False) #
-buttons['county_covid_data'].js_on_change('active',CustomJS(args={'pcc':pcc},code="""
+buttons['county_covid_data'].js_on_change('active',CustomJS(args={'p_county_covid':p_county_covid},code="""
                   if (cb_obj.active == false){
                       cb_obj.label  = "Show County Time History Graph"
-                      pcc.visible = false
+                      p_county_covid.visible = false
                   }
                   else{
                       cb_obj.label  = "Hide County Time History Graph"
-                      pcc.visible = true
+                      p_county_covid.visible = true
                       }
                   """))
 
 buttons['reset_county_covid_data'] = Button(label="Reset County Time History Graph", visible=False, button_type='primary')
-buttons['reset_county_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'pcc':pcc},code="""
-                  pcc.reset.emit();
+buttons['reset_county_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'p_county_covid':p_county_covid},code="""
+                  p_county_covid.reset.emit();
                   """))
 buttons['reset_state_covid_data'] = Button(label="Reset State Time History Graph", visible=False, button_type='primary')
-buttons['reset_state_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'psc':psc},code="""
-                  psc.reset.emit();
+buttons['reset_state_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'p_state_covid':p_state_covid},code="""
+                  p_state_covid.reset.emit();
                   """))
 
 # %% Make map of all counties
@@ -647,7 +647,7 @@ buttons['reset_state_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={
 # %% Make map of all counties
 ________________________________________________________________________________
 """
-p = figure(
+p_county_map = figure(
     title="(Tap a county on the map above to show the corresponding data here)",
     tools= "pan,wheel_zoom,tap,reset,hover,save",active_tap='tap',
     toolbar_location=plot_settings['toolbar_location'],
@@ -667,19 +667,19 @@ p = figure(
     visible = False,
     )
 bztool = BoxZoomTool(match_aspect=True)
-p.add_tools(bztool)
-p.toolbar.active_drag=  None #bztool
+p_county_map.add_tools(bztool)
+p_county_map.toolbar.active_drag=  None #bztool
 
 tile_provider = get_provider(CARTODBPOSITRON_RETINA)
-p.add_tile(tile_provider)
-p.grid.grid_line_color = None
-p.hover.point_policy = "follow_mouse"
-patches_counties = p.patches(
+p_county_map.add_tile(tile_provider)
+p_county_map.grid.grid_line_color = None
+p_county_map.hover.point_policy = "follow_mouse"
+patches_counties = p_county_map.patches(
     'x', 'y', source=ColumnDataSource(DS_Counties_map[state_name].data),
     fill_color={'field': 'current_positive_increase_mav', 'transform': color_mapper},
     fill_alpha=0.6, line_color="white", line_width=1,
     )
-p.add_layout(color_bar, 'right')
+p_county_map.add_layout(color_bar, 'right')
 
 
 # Add taptool to select from which state to show all the counties
@@ -687,7 +687,7 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
                              'glyphs_covid_county':glyphs_covid_county,
                              #'DS_Counties_COVID':DS_Counties_COVID,
                              'ext_datafiles': ext_datafiles,
-                             'pcc': pcc,
+                             'p_county_covid': p_county_covid,
                              'tb':[buttons['county_covid_data'],buttons['reset_county_covid_data']],
                              },
                        code="""
@@ -711,15 +711,15 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
                     }
             });
 
-            //pcc.visible = true
+            //p_county_covid.visible = true
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
-            pcc.title.text = counte_state_name+": COVID data time history, population normalized"//  (Tap a county on the map above to show the corresponding data here)"
+            p_county_covid.title.text = counte_state_name+": COVID data time history, population normalized"//  (Tap a county on the map above to show the corresponding data here)"
         }
         console.log(county_id)
                        """)
-taptool = p.select(type=TapTool)
+taptool = p_county_map.select(type=TapTool)
 taptool.callback = callbacktap
 
 #%% Make County map buttons
@@ -728,8 +728,8 @@ taptool.callback = callbacktap
 ________________________________________________________________________________
 """
 buttons['reset_county_map'] = Button(label="Reset Map of Counties", visible=False, button_type='warning')
-buttons['reset_county_map'].js_on_event(events.ButtonClick,CustomJS(args={'p':p},code="""
-                  p.reset.emit();
+buttons['reset_county_map'].js_on_event(events.ButtonClick,CustomJS(args={'p_county_map':p_county_map},code="""
+                  p_county_map.reset.emit();
                   """))
 
 
@@ -742,7 +742,7 @@ def minmax(xx):
     minxx = np.nanmin([np.nanmin(x) for x in xx])
     maxxx = np.nanmax([np.nanmax(x) for x in xx])
     return (minxx, maxxx)
-ps = figure(
+p_state_map = figure(
     title="US States - Colors show last weeks average daily increase in positive cases per 1 million people in each area",
     #x_range=minmax(DS_States_map.data['xc']), y_range=minmax(DS_States_map.data['yc']),
     x_range=(-1.4e7,-7.4e6),
@@ -756,20 +756,20 @@ ps = figure(
     aspect_ratio = 2,
     match_aspect=True,
     )
-ps.grid.grid_line_color = None
+p_state_map.grid.grid_line_color = None
 bztool_s = BoxZoomTool(match_aspect=True)
-ps.add_tools(bztool_s)
-ps.toolbar.active_drag=  None #bztool_s
+p_state_map.add_tools(bztool_s)
+p_state_map.toolbar.active_drag=  None #bztool_s
 
 # Add the map tiles
 tile_provider = get_provider(CARTODBPOSITRON_RETINA)
-ps.add_tile(tile_provider)
+p_state_map.add_tile(tile_provider)
 
 # Add the states
-patches_states = ps.patches('x', 'y', source=DS_States_map,
+patches_states = p_state_map.patches('x', 'y', source=DS_States_map,
           fill_color={'field': 'current_positive_increase_mav', 'transform': color_mapper},
           fill_alpha=0.6, line_color="white", line_width=1)
-ps.add_layout(color_bar, 'right')
+p_state_map.add_layout(color_bar, 'right')
 # Add the hover tool to show the state name and number of counties
 hoverm = HoverTool()
 hoverm.tooltips=[
@@ -782,7 +782,7 @@ hoverm.tooltips=[
     ('Positive Active Cases',"@current_Absolute_positiveActive{0,0.}"),
     ('Deaths',"@current_Absolute_death{0,0.}"),
 ]
-ps.add_tools(hoverm)
+p_state_map.add_tools(hoverm)
 
 # Add taptool to select from which state to show all the counties
 callbacktap = CustomJS(args={'patches_counties': patches_counties,
@@ -791,8 +791,8 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                              'glyphs_covid_state':glyphs_covid_state,
                              #'DS_States_COVID':DS_States_COVID,
                              'ext_datafiles':ext_datafiles,
-                             'p':p,
-                             'psc':psc, # state covid data plot
+                             'p_county_map':p_county_map,
+                             'p_state_covid':p_state_covid, # state covid data plot
                              'tb':[buttons['state_covid_data'],buttons['reset_state_covid_data'],buttons['reset_county_map']],
                              'datetime_made': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                              },
@@ -813,8 +813,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             function rep_nan_code(dic,nan_code){
                 var inds
                 for (var key in dic){
-                        //dic[key] = array_element_replace(dic[key],nan_code,NaN)
-                        dic[key] = Float64Array.from(array_element_replace(dic[key],nan_code,-1))
+                        dic[key] = array_element_replace(dic[key],nan_code,NaN)
                 }
                 return dic;
             }
@@ -824,8 +823,14 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                     if (arr[i] === old_value) {
                       arr[i] = new_value;
                     }
-                    }
+                }
                 return arr;
+            }
+
+            function correct_date_format(dic,key='date'){
+                const mul = 1e-6
+                dic[key]=dic[key].map(function(a) {return a*mul;})
+                return dic
             }
 
             console.log("Using jquary to fetch data")
@@ -847,14 +852,20 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             $.getJSON(datafilename,function(from_datafile){
                 console.log('Read file: '+datafilename)
                 console.log(from_datafile)
-                from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
 
-                Float64Array
+                from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
+                from_datafile['data'] = correct_date_format(from_datafile['data'])
+
 
                 console.log('Data before:')
                 console.log(glyphs_covid_state[0].data_source.data)
                 console.log('Data loaded:')
                 console.log(from_datafile['data'])
+
+                console.log('First date in before:')
+                console.log(glyphs_covid_state[0].data_source.data['date'][0])
+                console.log('First date in loaded:')
+                console.log(from_datafile['data']['date'][0])
 
                 for (var i=0; i< glyphs_covid_state.length; i++){
                     glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
@@ -866,18 +877,18 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             console.log("Updating the state map")
             patches_counties.data_source.data = DS_Counties_map[state_name].data
             patches_counties.data_source.change.emit(); // Update the county patches
-            p.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
-            p.visible   = true
+            p_county_map.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
+            p_county_map.visible   = true
 
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
-            //psc.visible = true
-            psc.title.text = state_name+": COVID data time history, population normalized"//   (Tap a state on the map above to show the corresponding data here)"
+            //p_state_covid.visible = true
+            p_state_covid.title.text = state_name+": COVID data time history, population normalized"//   (Tap a state on the map above to show the corresponding data here)"
         }
         console.log(state_name)
                        """)
-taptool = ps.select(type=TapTool)
+taptool = p_state_map.select(type=TapTool)
 taptool.callback = callbacktap
 
 #%% Make State map buttons
@@ -886,8 +897,8 @@ taptool.callback = callbacktap
 ________________________________________________________________________________
 """
 buttons['reset_state_map'] = Button(label="Reset Map of States", visible=True, button_type='warning')
-buttons['reset_state_map'].js_on_event(events.ButtonClick,CustomJS(args={'ps':ps},code="""
-                  ps.reset.emit();
+buttons['reset_state_map'].js_on_event(events.ButtonClick,CustomJS(args={'p_state_map':p_state_map},code="""
+                  p_state_map.reset.emit();
                   """))
 
 
@@ -897,7 +908,7 @@ buttons['reset_state_map'].js_on_event(events.ButtonClick,CustomJS(args={'ps':ps
 """
 heading = Div(text="""
 <h1> US State And County Maps Of COVID Data With Population Normalized Time History </h1>
-<p>Shows all the US states colored according to last weeks average number of new COVID-19 cases per day with state population normalization  (number of people per million).</p>
+<p_county_map>Shows all the US states colored according to last weeks average number of new COVID-19 cases per day with state population normalization  (number of people per million).</p_county_map>
 <ul>
 	<li>Higher color number corresponds to faster spread of the virus.</li>
     <li>On the top right of each graph thera are tools to zoom/pan/reset/save.</li>
@@ -934,23 +945,24 @@ ________________________________________________________________________________
 """
 
 # Layout the figures and show them
-ps.sizing_mode = 'scale_width'
-psc.sizing_mode = 'scale_width'
-p.sizing_mode = 'scale_width'
-pcc.sizing_mode = 'scale_width'
-#layout = column(heading,ps,buttons['state_covid_data'],psc,p,buttons['county_covid_data'],pcc,footer,sizing_mode='scale_width')
-# layout = column(row(ps,psc,sizing_mode='scale_width'),row(p,pcc,sizing_mode='scale_width'),sizing_mode='scale_width')
+p_state_covid.visible = True
+p_state_map.sizing_mode = 'scale_width'
+p_state_covid.sizing_mode = 'scale_width'
+p_county_map.sizing_mode = 'scale_width'
+p_county_covid.sizing_mode = 'scale_width'
+#layout = column(heading,p_state_map,buttons['state_covid_data'],p_state_covid,p_county_map,buttons['county_covid_data'],p_county_covid,footer,sizing_mode='scale_width')
+# layout = column(row(p_state_map,p_state_covid,sizing_mode='scale_width'),row(p_county_map,p_county_covid,sizing_mode='scale_width'),sizing_mode='scale_width')
 layout = column(heading,
-                ps,
+                p_state_map,
                 row(buttons['reset_state_map'],buttons['state_covid_data'],buttons['reset_state_covid_data'],sizing_mode='scale_width',
                     margin=(0,20,0,20),
                     ),
-                psc,
-                p,
+                p_state_covid,
+                p_county_map,
                 row(buttons['reset_county_map'],buttons['county_covid_data'],buttons['reset_county_covid_data'],sizing_mode='scale_width',
                     margin=(0,20,0,20),
                     ),
-                pcc,
+                p_county_covid,
                 footer,
                 sizing_mode='scale_width')
 layout.margin = (0,24,0,24) # top, right, bottom, left
