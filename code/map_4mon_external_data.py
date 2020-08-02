@@ -790,7 +790,7 @@ p_state_map.add_tools(hoverm)
 # Add taptool to select from which state to show all the counties
 callbacktap = CustomJS(args={'patches_counties': patches_counties,
                              'index_to_state_name':DS_States_map.data['name'],
-                             'DS_Counties_map':DS_Counties_map,
+                             #'DS_Counties_map':DS_Counties_map,
                              'glyphs_covid_state':glyphs_covid_state,
                              #'DS_States_COVID':DS_States_COVID,
                              'ext_datafiles':ext_datafiles,
@@ -811,6 +811,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             console.log(ext_datafiles['path'])
             console.log(ext_datafiles['key_to_filename'][state_name])
             var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name]
+            var datafilename_map = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name+'_map']
             console.log(datafilename)
 
             function rep_nan_code(dic,nan_code){
@@ -823,8 +824,13 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
 
             function array_element_replace(arr, old_value, new_value) {
                 for (var i = 0; i < arr.length; i++) {
-                    if (arr[i] === old_value) {
-                      arr[i] = new_value;
+                    if (arr[i].length>1){
+                        arr[i] =  array_element_replace(arr[i], old_value, new_value)
+                    }
+                    else{
+                        if (arr[i] === old_value) {
+                          arr[i] = new_value;
+                        }
                     }
                 }
                 return arr;
@@ -836,51 +842,60 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 return dic
             }
 
-            console.log("Using jquary to fetch data")
-            $.getJSON( 'data/data_00000.json', function() {
+            console.log("Using jquary to fetch Covid data")
+            $.getJSON(datafilename, function() {
               console.log( "success" );
             })
-              .done(function() {
-                console.log( "second success" );
-              })
+              .done(function(from_datafile) {
+                console.log('Read file: '+datafilename)
+                from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
+                from_datafile['data'] = correct_date_format(from_datafile['data'])
+
+                for (var i=0; i< glyphs_covid_state.length; i++){
+                    glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
+                    glyphs_covid_state[i].data_source.change.emit();
+                    }
+                console.log('Updated to contents of: '+datafilename)              })
               .fail(function( jqxhr, textStatus, error ) {
                 var err = textStatus + ", " + error;
                 console.log( "Request Failed: " + err );
                 console.log(jqxhr)
               })
               .always(function() {
-                console.log( "complete the Always func" );
+                //console.log( "complete the Always func" );
               });
 
-            $.getJSON(datafilename,function(from_datafile){
-                console.log('Read file: '+datafilename)
-                console.log(from_datafile)
 
+            //console.log("Updating the state map")
+
+            console.log("Using jquary to fetch map data")
+            $.getJSON(datafilename_map, function() {
+              console.log( "success" );
+            })
+              .done(function(from_datafile) {
+                console.log('Read file: '+datafilename_map)
                 from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
-                from_datafile['data'] = correct_date_format(from_datafile['data'])
+
+                patches_counties.data_source.data = from_datafile['data']
+                patches_counties.data_source.change.emit(); // Update the county patches
+                p_county_map.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
+
+                console.log('Updated to contents of: '+datafilename_map)
+                })
+              .fail(function( jqxhr, textStatus, error ) {
+                var err = textStatus + ", " + error;
+                console.log( "Request Failed: " + err );
+                console.log(jqxhr)
+              })
+              .always(function() {
+                //console.log( "complete the Always func" );
+              });
 
 
-                console.log('Data before:')
-                console.log(glyphs_covid_state[0].data_source.data)
-                console.log('Data loaded:')
-                console.log(from_datafile['data'])
+            //patches_counties.data_source.data = DS_Counties_map[state_name].data
+            //patches_counties.data_source.change.emit(); // Update the county patches
+            //p_county_map.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
 
-                console.log('First date in before:')
-                console.log(glyphs_covid_state[0].data_source.data['date'][0])
-                console.log('First date in loaded:')
-                console.log(from_datafile['data']['date'][0])
-
-                for (var i=0; i< glyphs_covid_state.length; i++){
-                    glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
-                    glyphs_covid_state[i].data_source.change.emit();
-                    }
-                console.log('Updated to contents of: '+datafilename)
-            });
-
-            console.log("Updating the state map")
-            patches_counties.data_source.data = DS_Counties_map[state_name].data
-            patches_counties.data_source.change.emit(); // Update the county patches
-            p_county_map.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
             p_county_map.visible   = true
 
             for (var i=0; i<tb.length; i++){
