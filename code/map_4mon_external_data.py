@@ -880,7 +880,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
 
                 console.log('Data before:')
-                console.log(glyphs_covid_state[i].data_source.data)
+                console.log(glyphs_covid_state[0].data_source.data)
                 console.log('Data loaded:')
                 console.log(from_datafile['data'])
 
