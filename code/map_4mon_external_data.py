@@ -611,7 +611,7 @@ color_bar = ColorBar(
 ________________________________________________________________________________
 """
 buttons = {}
-buttons['state_covid_data'] = Toggle(label="State Time History Graph",visible=False) #
+buttons['state_covid_data'] = Toggle(label="State Time History Graph",visible=False, button_type='primary') #
 buttons['state_covid_data'].js_on_change('active',CustomJS(args={'p_state_covid':p_state_covid},code="""
                   if (cb_obj.active == false){
                       cb_obj.label  = "Show State Time History Graph"
@@ -624,7 +624,7 @@ buttons['state_covid_data'].js_on_change('active',CustomJS(args={'p_state_covid'
                   """))
 
 
-buttons['county_covid_data'] = Toggle(label="County Time History Graph", visible=False) #
+buttons['county_covid_data'] = Toggle(label="County Time History Graph", visible=False, button_type='primary') #
 buttons['county_covid_data'].js_on_change('active',CustomJS(args={'p_county_covid':p_county_covid},code="""
                   if (cb_obj.active == false){
                       cb_obj.label  = "Show County Time History Graph"
@@ -636,11 +636,11 @@ buttons['county_covid_data'].js_on_change('active',CustomJS(args={'p_county_covi
                       }
                   """))
 
-buttons['reset_county_covid_data'] = Button(label="Reset County Time History Graph", visible=False, button_type='primary')
+buttons['reset_county_covid_data'] = Button(label="Reset County Time History Graph", visible=False, button_type='default')
 buttons['reset_county_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'p_county_covid':p_county_covid},code="""
                   p_county_covid.reset.emit();
                   """))
-buttons['reset_state_covid_data'] = Button(label="Reset State Time History Graph", visible=False, button_type='primary')
+buttons['reset_state_covid_data'] = Button(label="Reset State Time History Graph", visible=False, button_type='default')
 buttons['reset_state_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'p_state_covid':p_state_covid},code="""
                   p_state_covid.reset.emit();
                   """))
