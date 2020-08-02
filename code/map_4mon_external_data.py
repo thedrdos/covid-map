@@ -154,16 +154,16 @@ print('Conversions Completed.')
 # %% Empty the COVID data structures, since they won't be used (will use ext_data json files)
 ________________________________________________________________________________
 """
-for d in DS_States_COVID:
-    dic = {}
-    for k in DS_States_COVID[d].data.keys():
-        dic[k] = DS_States_COVID[d].data[k][-2:-1]
-    DS_States_COVID[d] = ColumnDataSource(dic)
-for d in DS_Counties_COVID:
-    dic = {}
-    for k in DS_Counties_COVID[d].data.keys():
-        dic[k] = DS_Counties_COVID[d].data[k][-2:-1]
-    DS_Counties_COVID[d] = ColumnDataSource(dic)
+# for d in DS_States_COVID:
+#     dic = {}
+#     for k in DS_States_COVID[d].data.keys():
+#         dic[k] = DS_States_COVID[d].data[k][-2:-1]
+#     DS_States_COVID[d] = ColumnDataSource(dic)
+# for d in DS_Counties_COVID:
+#     dic = {}
+#     for k in DS_Counties_COVID[d].data.keys():
+#         dic[k] = DS_Counties_COVID[d].data[k][-2:-1]
+#     DS_Counties_COVID[d] = ColumnDataSource(dic)
 """
 # %% Load key_to_filename
 ________________________________________________________________________________
@@ -878,6 +878,12 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 console.log('Read file: '+datafilename)
                 console.log(from_datafile)
                 from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
+
+                console.log('Data before:')
+                console.log(glyphs_covid_state[i].data_source.data)
+                console.log('Data loaded:')
+                console.log(from_datafile['data'])
+
                 for (var i=0; i< glyphs_covid_state.length; i++){
                     glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
                     glyphs_covid_state[i].data_source.change.emit();
