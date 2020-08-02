@@ -841,7 +841,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             console.log(datafilename)
 
             console.log("Using jquary to fetch data")
-            $.getJSON( "example.json", function() {
+            $.getJSON( 'data/data_00000.json', function() {
               console.log( "success" );
             })
               .done(function() {
