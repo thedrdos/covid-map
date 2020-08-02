@@ -149,6 +149,9 @@ state_name = 'Ohio' # get first key, i.e. state name
 with open(ext_datafiles_path+ext_datafiles['key_to_filename'][state_name]) as f:
     init_data = json.load(f)['data']
 init_data['date'] = pd.to_datetime(init_data['date'])
+# Reduce the initial dataset to save Spacer
+for k in init_data:
+    init_data[k] = init_data[k][0:1]
 DS_States_COVID[state_name] = ColumnDataSource(init_data)
 # %% Make State graph for COVID data
 """
