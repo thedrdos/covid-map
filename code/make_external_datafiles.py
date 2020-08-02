@@ -85,7 +85,7 @@ print('Conversions Completed.')
 """
 Make the external datafiles
 """
-ext_data_path = "../site/plots/ext_data/"
+ext_data_path = "../site/plots/data/"
 filename_key2datafilename = "key_to_filename.json"
 key2datafilename = {'0Info': """Keys map to the respective datafile with the COVID data
 The datafiles have 3 keys: {}

@@ -169,9 +169,9 @@ for d in DS_Counties_COVID:
 ________________________________________________________________________________
 """
 ext_datafiles = {}
-with open('../site/plots/ext_data/key_to_filename.json') as f:
+with open('../site/plots/data/key_to_filename.json') as f:
     ext_datafiles['key_to_filename'] = json.load(f)
-ext_datafiles['path'] = 'ext_data/'
+ext_datafiles['path'] = 'data/'
 
 # %% Select first state to view
 """
