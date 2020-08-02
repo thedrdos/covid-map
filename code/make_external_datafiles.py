@@ -27,11 +27,6 @@ import progress_bar as pbar
 
 import json_extra as je
 
-# %% General plotting settings
-plot_settings = {
-    'toolbar_location': 'above'
-}
-
 # %% Get data
 data_path = './tmp_data/'
 print('*** Load Processed Data From: ' + data_path)
@@ -90,7 +85,7 @@ print('Conversions Completed.')
 """
 Make the external datafiles
 """
-ext_data_path = "../site/ext_data/"
+ext_data_path = "../site/plots/ext_data/"
 filename_key2datafilename = "key_to_filename.json"
 key2datafilename = {'0Info': """Keys map to the respective datafile with the COVID data
 The datafiles have 3 keys: {}
