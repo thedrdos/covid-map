@@ -1024,5 +1024,5 @@ layout = column(heading,
                 footer,
                 sizing_mode='scale_width')
 layout.margin = (0,24,0,24) # top, right, bottom, left
-save(layout,template=template_ext_js('jquary'))
+save(layout,template=template_ext_js('jquary'), title="Interactive Map of USA COVID19 Data with Time History")
 view(output_filename+'.html')
