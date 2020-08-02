@@ -841,15 +841,25 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             console.log(datafilename)
 
             console.log("Using jquary to fetch data")
-            $.getJSON(datafilename,function(from_datafile){
-                console.log('Read file: '+datafilename)
+            $.getJSON('ext_data/data_00000.json',function(from_datafile){
+                console.log('Read file: '+'ext_data/data_00000.json')
                 console.log(from_datafile)
-                for (var i=0; i< glyphs_covid_state.length; i++){
-                    glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
-                    glyphs_covid_state[i].data_source.change.emit();
-                    }
                 console.log('Updated to contents of: '+datafilename)
             });
+            $.getJSON('ext_data/data_00000.json', function( data ) {
+              console.log('Read file: '+'ext_data/data_00000.json')
+              console.log(data)
+              console.log('Updated to contents of: '+'ext_data/data_00000.json')
+            });
+            //$.getJSON(datafilename,function(from_datafile){
+//                console.log('Read file: '+datafilename)
+//                console.log(from_datafile)
+//                for (var i=0; i< glyphs_covid_state.length; i++){
+//                    glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
+//                    glyphs_covid_state[i].data_source.change.emit();
+//                    }
+//                console.log('Updated to contents of: '+datafilename)
+//            });
 
             console.log("Updating the state map")
             patches_counties.data_source.data = DS_Counties_map[state_name].data
