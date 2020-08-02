@@ -841,6 +841,21 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             console.log(datafilename)
 
             console.log("Using jquary to fetch data")
+            $.getJSON( "example.json", function() {
+              console.log( "success" );
+            })
+              .done(function() {
+                console.log( "second success" );
+              })
+              .fail(function( jqxhr, textStatus, error ) {
+                var err = textStatus + ", " + error;
+                console.log( "Request Failed: " + err );
+                console.log(jqxhr)
+              })
+              .always(function() {
+                console.log( "complete the Always func" );
+              });
+
             $.getJSON('data/data_00000.json', function( data ) {
               console.log('Read file: '+'data/data_00000.json')
               console.log(data)
