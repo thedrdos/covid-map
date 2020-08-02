@@ -58,7 +58,7 @@ from bokeh_template_external_js import template as template_ext_js
 ________________________________________________________________________________
 """
 plot_settings = {
-    'toolbar_location':'above'
+    'toolbar_location':'left'
     }
 
 # %% Assign output file
@@ -971,7 +971,7 @@ heading = Div(text="""
 <p_county_map>Shows all the US states colored according to last weeks average number of new COVID-19 cases per day with state population normalization  (number of people per million).</p_county_map>
 <ul>
 	<li>Higher color number corresponds to faster spread of the virus.</li>
-    <li>On the top right of each graph thera are tools to zoom/pan/reset/save.</li>
+    <li>On the left of each graph thera are tools to zoom/pan/reset/save.</li>
 	<li>On Mobile: Use two finger to scroll the page.</li>
     <li>Data last updated on: {data_update} </li>
     <li>Graphs generated on: {graph_update} </li>
