@@ -10,9 +10,19 @@ echo "##########################################"
 python process_data_for_maps.py || exit 2
 
 echo "##########################################"
+echo "Running: make_external_datafiles.py"
+echo "##########################################"
+python make_external_datafiles.py || exit 2
+
+echo "##########################################"
 echo "Running: map_4mon_standalone.py"
 echo "##########################################"
 python map_4mon_standalone.py || exit 3
+
+echo "##########################################"
+echo "Running: map_4mon_external_data.py"
+echo "##########################################"
+python map_4mon_external_data.py || exit 3
 
 echo "##########################################"
 echo "Running: make_website.py"
