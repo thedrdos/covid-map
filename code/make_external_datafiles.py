@@ -85,28 +85,40 @@ print('Conversions Completed.')
 """
 Make the external datafiles
 """
+nan_code = -123456789
 ext_data_path = "../site/plots/data/"
 filename_key2datafilename = "key_to_filename.json"
 key2datafilename = {'0Info': """Keys map to the respective datafile with the COVID data
 The datafiles have 3 keys: {}
 'key': [string, the key the file is associated with],
 'filename': [string, the filename],
-'data': [dictionary, the data from the respective ColumnDataSource]
+'data': [dictionary, the data from the respective ColumnDataSource],
+'nan_code': int/float, used to identify a nan number,
 }"""}
 N = len(DS_Counties_COVID) - 1 + len(DS_States_COVID) - 1
 n = 0
+
+def dic_rep_nan(dic):
+    for d in dic:
+        dic[d] = np.nan_to_num(dic[d],nan=nan_code)
+    return dic
+
 for d in DS_States_COVID:
     pbar.progress_bar(n, N)
     datafilename = 'data_' + '{:05.0f}'.format(n) + '.json'
     key2datafilename[d] = datafilename
     je.dump({'key': d, 'filename': datafilename,
-             'data': DS_States_COVID[d].data}, ext_data_path + datafilename, human_readable=False)
+             'data': dic_rep_nan(DS_States_COVID[d].data),
+             'nan_code': nan_code,
+             }, ext_data_path + datafilename, human_readable=False)
     n = n + 1
 for d in DS_Counties_COVID:
     pbar.progress_bar(n, N)
     datafilename = 'data_' + '{:05.0f}'.format(n) + '.json'
     key2datafilename[d] = datafilename
     je.dump({'key': d, 'filename': datafilename,
-             'data': DS_Counties_COVID[d].data}, ext_data_path + datafilename, human_readable=False)
+             'data': dic_rep_nan(DS_Counties_COVID[d].data),
+             'nan_code': nan_code,
+             }, ext_data_path + datafilename, human_readable=False)
     n = n + 1
 je.dump(key2datafilename, ext_data_path + filename_key2datafilename)

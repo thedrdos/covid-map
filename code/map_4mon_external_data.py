@@ -840,6 +840,15 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name]
             console.log(datafilename)
 
+            function rep_nan_code(dic,nan_code){
+                var inds
+                for (var key in dic){
+                        inds = dic[key].findIndex((el) => el === nan_code);
+                        dic[key][index] = NaN;
+                }
+                return dic;
+            }
+
             console.log("Using jquary to fetch data")
             $.getJSON( 'data/data_00000.json', function() {
               console.log( "success" );
@@ -856,14 +865,10 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 console.log( "complete the Always func" );
               });
 
-            $.getJSON('data/data_00000.json', function( data ) {
-              console.log('Read file: '+'data/data_00000.json')
-              console.log(data)
-              console.log('Updated to contents of: '+'ext_data/data_00000.json')
-            });
             $.getJSON(datafilename,function(from_datafile){
                 console.log('Read file: '+datafilename)
                 console.log(from_datafile)
+                from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
                 for (var i=0; i< glyphs_covid_state.length; i++){
                     glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
                     glyphs_covid_state[i].data_source.change.emit();

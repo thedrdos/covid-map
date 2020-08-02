@@ -1,5 +1,5 @@
 {
-    "0Info": "Keys map to the respective datafile with the COVID data\nThe datafiles have 3 keys: {}\n'key': [string, the key the file is associated with],\n'filename': [string, the filename],\n'data': [dictionary, the data from the respective ColumnDataSource]\n}",
+    "0Info": "Keys map to the respective datafile with the COVID data\nThe datafiles have 3 keys: {}\n'key': [string, the key the file is associated with],\n'filename': [string, the filename],\n'data': [dictionary, the data from the respective ColumnDataSource],\n'nan_code': int/float, used to identify a nan number,\n}",
     "Abbeville, South Carolina, US": "data_02963.json",
     "Acadia, Louisiana, US": "data_01538.json",
     "Accomack, Virginia, US": "data_01395.json",
