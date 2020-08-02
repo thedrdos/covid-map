@@ -841,11 +841,6 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             console.log(datafilename)
 
             console.log("Using jquary to fetch data")
-            $.getJSON('ext_data/data_00000.json',function(from_datafile){
-                console.log('Read file: '+'ext_data/data_00000.json')
-                console.log(from_datafile)
-                console.log('Updated to contents of: '+datafilename)
-            });
             $.getJSON('ext_data/data_00000.json', function( data ) {
               console.log('Read file: '+'ext_data/data_00000.json')
               console.log(data)
