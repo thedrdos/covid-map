@@ -70,7 +70,8 @@ def filename(fullname):
     """ Return the name of a file without its path or extension"""
     return os.path.splitext(os.path.split(fullname)[1])[0]
 output_filename = "../site/plots/"+os.path.basename(os.path.splitext(__file__)[0]) # name the output file/s after the script file
-output_file(output_filename+".html",title=filename(output_filename))
+output_file(output_filename+".html",
+    title="Interactive Map of USA COVID19 Data with Time History")#title=filename(output_filename))
 
 # %% Get data
 """
@@ -1024,5 +1025,5 @@ layout = column(heading,
                 footer,
                 sizing_mode='scale_width')
 layout.margin = (0,24,0,24) # top, right, bottom, left
-save(layout,template=template_ext_js('jquary'), title="Interactive Map of USA COVID19 Data with Time History")
+save(layout,template=template_ext_js('jquary'))
 view(output_filename+'.html')
