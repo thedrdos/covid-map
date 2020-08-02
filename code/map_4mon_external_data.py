@@ -844,7 +844,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 var inds
                 for (var key in dic){
                         //dic[key] = array_element_replace(dic[key],nan_code,NaN)
-                        dic[key] = array_element_replace(dic[key],nan_code,-1)
+                        dic[key] = Float64Array.from(array_element_replace(dic[key],nan_code,-1))
                 }
                 return dic;
             }
@@ -878,6 +878,8 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 console.log('Read file: '+datafilename)
                 console.log(from_datafile)
                 from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
+
+                Float64Array
 
                 console.log('Data before:')
                 console.log(glyphs_covid_state[0].data_source.data)
