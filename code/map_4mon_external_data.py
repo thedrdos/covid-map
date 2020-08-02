@@ -688,7 +688,6 @@ p_county_map.add_layout(color_bar, 'right')
 # Add taptool to select from which state to show all the counties
 callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
                              'glyphs_covid_county':glyphs_covid_county,
-                             #'DS_Counties_COVID':DS_Counties_COVID,
                              'ext_datafiles': ext_datafiles,
                              'p_county_covid': p_county_covid,
                              'tb':[buttons['county_covid_data'],buttons['reset_county_covid_data']],
@@ -703,22 +702,68 @@ callbacktap = CustomJS(args={'index_to_state_name':DS_States_map.data['name'],
             var county_id = county_name + ", "+state_name+", US"
 
             console.log(county_id)
-            console.log(ext_datafiles['path'])
-            console.log(ext_datafiles['key_to_filename'][county_id])
+            //console.log(ext_datafiles['path'])
+            //console.log(ext_datafiles['key_to_filename'][county_id])
             var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][county_id]
 
-            $.getJSON(datafilename,function(from_datafile){
-                for (var i=0; i< glyphs_covid_state.length; i++){
-                    glyphs_covid_county[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
+            function rep_nan_code(dic,nan_code){
+                var inds
+                for (var key in dic){
+                        dic[key] = array_element_replace(dic[key],nan_code,NaN)
+                }
+                return dic;
+            }
+
+            function array_element_replace(arr, old_value, new_value) {
+                for (var i = 0; i < arr.length; i++) {
+                    if (arr[i].length>1){
+                        arr[i] =  array_element_replace(arr[i], old_value, new_value)
+                    }
+                    else{
+                        if (arr[i] === old_value) {
+                          arr[i] = new_value;
+                        }
+                    }
+                }
+                return arr;
+            }
+
+            function correct_date_format(dic,key='date'){
+                const mul = 1e-6
+                dic[key]=dic[key].map(function(a) {return a*mul;})
+                return dic
+            }
+
+            console.log("Using jquary to fetch Covid data")
+            $.getJSON(datafilename, function() {
+              //console.log( "success" );
+            })
+              .done(function(from_datafile) {
+                console.log('Read file: '+datafilename)
+                from_datafile['data'] = rep_nan_code(from_datafile['data'],from_datafile['nan_code'])
+                from_datafile['data'] = correct_date_format(from_datafile['data'])
+
+                for (var i=0; i< glyphs_covid_county.length; i++){
+                    glyphs_covid_county[i].data_source.data = from_datafile['data']
                     glyphs_covid_county[i].data_source.change.emit();
                     }
-            });
+                //console.log('Updated to contents of: '+datafilename)
+                })
+              .fail(function( jqxhr, textStatus, error ) {
+                var err = textStatus + ", " + error;
+                console.log( "Request Failed: " + err );
+                console.log(jqxhr)
+              })
+              .always(function() {
+                //console.log( "complete the Always func" );
+              });
 
-            //p_county_covid.visible = true
+            // Enable Buttons
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
-            p_county_covid.title.text = counte_state_name+": COVID data time history, population normalized"//  (Tap a county on the map above to show the corresponding data here)"
+            // Update title
+            p_county_covid.title.text = counte_state_name+": COVID data time history, population normalized"
         }
         console.log(county_id)
                        """)
@@ -790,9 +835,7 @@ p_state_map.add_tools(hoverm)
 # Add taptool to select from which state to show all the counties
 callbacktap = CustomJS(args={'patches_counties': patches_counties,
                              'index_to_state_name':DS_States_map.data['name'],
-                             #'DS_Counties_map':DS_Counties_map,
                              'glyphs_covid_state':glyphs_covid_state,
-                             #'DS_States_COVID':DS_States_COVID,
                              'ext_datafiles':ext_datafiles,
                              'p_county_map':p_county_map,
                              'p_state_covid':p_state_covid, # state covid data plot
@@ -806,13 +849,13 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
             var state_name = index_to_state_name[ind]
 
 
-            console.log('This file was made on: '+datetime_made)
+            //console.log('This file was made on: '+datetime_made)
             console.log(state_name)
-            console.log(ext_datafiles['path'])
-            console.log(ext_datafiles['key_to_filename'][state_name])
+            //console.log(ext_datafiles['path'])
+            //console.log(ext_datafiles['key_to_filename'][state_name])
             var datafilename = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name]
             var datafilename_map = ext_datafiles['path']+ext_datafiles['key_to_filename'][state_name+'_map']
-            console.log(datafilename)
+            //console.log(datafilename)
 
             function rep_nan_code(dic,nan_code){
                 var inds
@@ -844,7 +887,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
 
             console.log("Using jquary to fetch Covid data")
             $.getJSON(datafilename, function() {
-              console.log( "success" );
+              //console.log( "success" );
             })
               .done(function(from_datafile) {
                 console.log('Read file: '+datafilename)
@@ -855,7 +898,8 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                     glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
                     glyphs_covid_state[i].data_source.change.emit();
                     }
-                console.log('Updated to contents of: '+datafilename)              })
+                //console.log('Updated to contents of: '+datafilename)
+                })
               .fail(function( jqxhr, textStatus, error ) {
                 var err = textStatus + ", " + error;
                 console.log( "Request Failed: " + err );
@@ -868,9 +912,9 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
 
             //console.log("Updating the state map")
 
-            console.log("Using jquary to fetch map data")
+            //console.log("Using jquary to fetch map data")
             $.getJSON(datafilename_map, function() {
-              console.log( "success" );
+              //console.log( "success" );
             })
               .done(function(from_datafile) {
                 console.log('Read file: '+datafilename_map)
@@ -880,7 +924,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 patches_counties.data_source.change.emit(); // Update the county patches
                 p_county_map.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
 
-                console.log('Updated to contents of: '+datafilename_map)
+                //console.log('Updated to contents of: '+datafilename_map)
                 })
               .fail(function( jqxhr, textStatus, error ) {
                 var err = textStatus + ", " + error;
@@ -891,17 +935,12 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 //console.log( "complete the Always func" );
               });
 
-
-            //patches_counties.data_source.data = DS_Counties_map[state_name].data
-            //patches_counties.data_source.change.emit(); // Update the county patches
-            //p_county_map.reset.emit(); // Reset the county figure, otherwise panning and zooming on that fig will persist despite the change
-
             p_county_map.visible   = true
-
+            // Enable buttons
             for (var i=0; i<tb.length; i++){
                     tb[i].visible  = true
             }
-            //p_state_covid.visible = true
+            // Update title
             p_state_covid.title.text = state_name+": COVID data time history, population normalized"//   (Tap a state on the map above to show the corresponding data here)"
         }
         console.log(state_name)
@@ -963,7 +1002,6 @@ ________________________________________________________________________________
 """
 
 # Layout the figures and show them
-p_state_covid.visible = True
 p_state_map.sizing_mode = 'scale_width'
 p_state_covid.sizing_mode = 'scale_width'
 p_county_map.sizing_mode = 'scale_width'
