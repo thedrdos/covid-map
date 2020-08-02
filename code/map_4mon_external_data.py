@@ -100,18 +100,11 @@ DS_Counties_COVID   = {}
 DS_Counties_map     = {}
 DS_States_map       = {}
 
-keep_covid_data = {
-    'keys': ['death', 'recovered', 'positiveActive', 'positive_increase_mav', 'positiveActive_increase_mav', 'death_increase10_mav'],
-    'first_date':   pd.Timestamp.now()-pd.DateOffset(months=4),
-    'last_date':    pd.Timestamp.now(),
-    }
-
 keep_map_data = {
     #['x', 'y', 'xc', 'yc', 'name', 'state_id', 'state_name', 'color', 'population', 'covid_data_labels', 'current_Absolute_positive', 'current_Absolute_death', 'current_Absolute_recovered', 'current_Absolute_positiveActive', 'current_positive', 'current_death', 'current_recovered', 'current_positiveActive', 'current_positiveActive_increase_mav', 'current_positive_increase_mav']
     'keys': ['x', 'y', 'name', 'state_name', 'population','number_of_counties', 'current_Absolute_positive', 'current_Absolute_death', 'current_Absolute_recovered', 'current_Absolute_positiveActive',  'current_positive_increase_mav'],
     }
-
-print('Converting States COVID Data...')
+print('Converting States COVID Data... (just used for max y tracking)')
 N = len(DF_States_COVID)-1
 max_pos = 10000; # track whats the maximum positive number per million (increment to find the nearest whole digit percentage)
 for n,d in enumerate(DF_States_COVID):
@@ -119,21 +112,8 @@ for n,d in enumerate(DF_States_COVID):
     if len(DF_States_COVID[d]['positive'])>0:
         if max(DF_States_COVID[d]['positive'].values)>max_pos:
             max_pos = max_pos+10000
-    DF_States_COVID[d] = DF_States_COVID[d][keep_covid_data['keys']].truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
-    DS_States_COVID[d] = ColumnDataSource(DF_States_COVID[d])
-    if n==0:
-        break
 del DF_States_COVID
 
-print('Converting Counties COVID Data...')
-N = len(DF_Counties_COVID)-1
-for n,d in enumerate(DF_Counties_COVID):
-    pbar.progress_bar(n, N)
-    DF_Counties_COVID[d] = DF_Counties_COVID[d][keep_covid_data['keys']].dropna().truncate(keep_covid_data['first_date'],keep_covid_data['last_date'])
-    DS_Counties_COVID[d] = ColumnDataSource(DF_Counties_COVID[d])
-    if n==0:
-        break
-del DF_Counties_COVID
 
 print('Converting Counties map Data...')
 N = len(DI_Counties_map)-1
@@ -150,36 +130,26 @@ del DI_States_map
 print('Conversions Completed.')
 
 
-"""
-# %% Empty the COVID data structures, since they won't be used (will use ext_data json files)
-________________________________________________________________________________
-"""
-# for d in DS_States_COVID:
-#     dic = {}
-#     for k in DS_States_COVID[d].data.keys():
-#         dic[k] = DS_States_COVID[d].data[k][-2:-1]
-#     DS_States_COVID[d] = ColumnDataSource(dic)
-# for d in DS_Counties_COVID:
-#     dic = {}
-#     for k in DS_Counties_COVID[d].data.keys():
-#         dic[k] = DS_Counties_COVID[d].data[k][-2:-1]
-#     DS_Counties_COVID[d] = ColumnDataSource(dic)
+
 """
 # %% Load key_to_filename
 ________________________________________________________________________________
 """
+ext_datafiles_path = '../site/plots/data/'
 ext_datafiles = {}
-with open('../site/plots/data/key_to_filename.json') as f:
+with open(ext_datafiles_path+'key_to_filename.json') as f:
     ext_datafiles['key_to_filename'] = json.load(f)
 ext_datafiles['path'] = 'data/'
 
-# %% Select first state to view
 """
-# %% Select first state to view
+# %% Load json file for initiallization
 ________________________________________________________________________________
 """
-state_name = next(iter(DS_States_COVID)) # get first key, i.e. state name
+state_name = 'Ohio' # get first key, i.e. state name
+with open(ext_datafiles_path+ext_datafiles['key_to_filename'][state_name]) as f:
+    init_data = json.load(f)['data']
 
+DS_States_COVID[state_name] = ColumnDataSource(init_data)
 # %% Make State graph for COVID data
 """
 # %% Make State graph for COVID data
@@ -191,8 +161,8 @@ source  = ColumnDataSource(DS_States_COVID[state_name].data)
 # Set Axis limits
 ax_limits = {
     'x':(
-        pd.to_datetime(keep_covid_data['first_date']), #datetime.date(2020, 3, 1)),
-        pd.to_datetime(datetime.datetime.now())
+        pd.Timestamp.now()-pd.DateOffset(months=4),
+        pd.Timestamp.now()
         ),
     'yl':(
         0, max_pos #1e6*5/100
@@ -374,8 +344,8 @@ source  = ColumnDataSource(DS_States_COVID[state_name].data)
 # Set Axis limits
 ax_limits = {
     'x':(
-        pd.to_datetime(keep_covid_data['first_date']), #datetime.date(2020, 3, 1)),
-        pd.to_datetime(datetime.datetime.now())
+        pd.Timestamp.now()-pd.DateOffset(months=4),
+        pd.Timestamp.now()
         ),
     'yl':(
         0, max_pos #1e6*5/100
