@@ -844,7 +844,7 @@ callbacktap = CustomJS(args={'patches_counties': patches_counties,
                 var inds
                 for (var key in dic){
                         inds = dic[key].findIndex((el) => el === nan_code);
-                        dic[key][index] = NaN;
+                        dic[key][inds] = NaN;
                 }
                 return dic;
             }
