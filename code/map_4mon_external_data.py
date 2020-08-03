@@ -1015,18 +1015,16 @@ p_county_covid.sizing_mode = 'scale_width'
 #layout = column(heading,p_state_map,buttons['state_covid_data'],p_state_covid,p_county_map,buttons['county_covid_data'],p_county_covid,footer,sizing_mode='scale_width')
 # layout = column(row(p_state_map,p_state_covid,sizing_mode='scale_width'),row(p_county_map,p_county_covid,sizing_mode='scale_width'),sizing_mode='scale_width')
 layout = column(heading,
-                p_state_map,
-                row(buttons['reset_state_map'],buttons['state_covid_data'],buttons['reset_state_covid_data'],sizing_mode='scale_width',
-                    margin=(0,20,0,20),
+                row(p_state_map,sizing_mode='scale_width'),
+                row(buttons['reset_state_map'],buttons['state_covid_data'],buttons['reset_state_covid_data'],sizing_mode='scale_width',margin=(0,20,0,20),
                     ),
                 p_state_covid,
                 p_county_map,
-                row(buttons['reset_county_map'],buttons['county_covid_data'],buttons['reset_county_covid_data'],sizing_mode='scale_width',
-                    margin=(0,20,0,20),
+                row(buttons['reset_county_map'],buttons['county_covid_data'],buttons['reset_county_covid_data'],sizing_mode='scale_width',margin=(0,20,0,20),
                     ),
-                p_county_covid,
-                footer,
+                row(p_county_covid,sizing_mode='scale_width'),
+                row(footer,sizing_mode='scale_width'),
                 sizing_mode='scale_width')
-layout.margin = (0,24,0,24) # top, right, bottom, left
+layout.margin = (4,20,4,20) # top, right, bottom, left
 save(layout,template=template_ext_js('jquary'))
 view(output_filename+'.html')
