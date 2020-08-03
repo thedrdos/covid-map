@@ -256,10 +256,11 @@ psc.add_layout(zero_span)
 
 # Weekly span marks
 ds = np.arange(ax_limits['x'][0],ax_limits['x'][1],dtype='datetime64[D]');
-day = np.timedelta64(1,'D',timezone=None)
+# Use of timezones was depricated, before all the timedelta64 commands needed ,timezone=None
+day =np.timedelta64(1,'D')
 for d in ds:
-    if ((np.timedelta64(ds.max()-d,timezone=None)/day)%7)==0:
-            ts = (np.datetime64(d,timezone=None) - np.datetime64('1970-01-01T00:00:00',timezone=None)) / np.timedelta64(1, 's',timezone=None)
+    if ((np.timedelta64(ds.max()-d)/day)%7)==0:
+            ts = (np.datetime64(d) - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
             wloc = ts*1000 # get the week mark location in a format compatible with annotations
             psc.add_layout(
                 Span(location=wloc,
@@ -436,10 +437,11 @@ pcc.add_layout(zero_span)
 
 # Weekly span marks
 ds = np.arange(ax_limits['x'][0],ax_limits['x'][1],dtype='datetime64[D]');
-day = np.timedelta64(1,'D',timezone=None)
+# Use of timezones was depricated, before all the timedelta64 commands needed ,timezone=None
+day = np.timedelta64(1,'D')
 for d in ds:
-    if ((np.timedelta64(ds.max()-d,timezone=None)/day)%7)==0:
-            ts = (np.datetime64(d,timezone=None) - np.datetime64('1970-01-01T00:00:00',timezone=None)) / np.timedelta64(1, 's',timezone=None)
+    if ((np.timedelta64(ds.max()-d)/day)%7)==0:
+            ts = (np.datetime64(d) - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
             wloc = ts*1000 # get the week mark location in a format compatible with annotations
             pcc.add_layout(
                 Span(location=wloc,

@@ -286,10 +286,11 @@ p_state_covid.add_layout(zero_span)
 
 # Weekly span marks
 ds = np.arange(ax_limits['x'][0],ax_limits['x'][1],dtype='datetime64[D]');
-day = np.timedelta64(1,'D',timezone=None)
+# use of timezones was depricated, before timezone=None was needed
+day = np.timedelta64(1,'D')
 for d in ds:
-    if ((np.timedelta64(ds.max()-d,timezone=None)/day)%7)==0:
-            ts = (np.datetime64(d,timezone=None) - np.datetime64('1970-01-01T00:00:00',timezone=None)) / np.timedelta64(1, 's',timezone=None)
+    if ((np.timedelta64(ds.max()-d)/day)%7)==0:
+            ts = (np.datetime64(d) - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
             wloc = ts*1000 # get the week mark location in a format compatible with annotations
             p_state_covid.add_layout(
                 Span(location=wloc,
@@ -470,10 +471,10 @@ p_county_covid.add_layout(zero_span)
 
 # Weekly span marks
 ds = np.arange(ax_limits['x'][0],ax_limits['x'][1],dtype='datetime64[D]');
-day = np.timedelta64(1,'D',timezone=None)
+day = np.timedelta64(1,'D')
 for d in ds:
-    if ((np.timedelta64(ds.max()-d,timezone=None)/day)%7)==0:
-            ts = (np.datetime64(d,timezone=None) - np.datetime64('1970-01-01T00:00:00',timezone=None)) / np.timedelta64(1, 's',timezone=None)
+    if ((np.timedelta64(ds.max()-d)/day)%7)==0:
+            ts = (np.datetime64(d) - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
             wloc = ts*1000 # get the week mark location in a format compatible with annotations
             p_county_covid.add_layout(
                 Span(location=wloc,
@@ -578,7 +579,7 @@ def make_color_mapper_and_ticks(palette,low=0,high=1,tick_decimals = 2, label_fo
     data = dict(zip(ticks_str,labs))
     out['ticks'] = ticks
     out['data'] = data
-    out['formatter'] = FuncTickFormatter(
+    out['formatter'] = FuncTickFormatter( # Uses the python generated dictionary of ticks and labels, finding the nearest tick in the list of keys, and returning the value (i.e. the associated python generated label). I could rewrite this to be done just in Javascript https://docs.bokeh.org/en/latest/docs/reference/models/formatters.html
         code="""
         var data = {data}
         var keys = Object.keys(data).map(Number) // Get all the ticks that are to be labeled
@@ -683,7 +684,9 @@ p_county_map.hover.point_policy = "follow_mouse"
 patches_counties = p_county_map.patches(
     'x', 'y', source=ColumnDataSource(DS_Counties_map[state_name].data),
     fill_color={'field': 'current_positive_increase_mav', 'transform': color_mapper},
-    fill_alpha=0.6, line_color="white", line_width=1,
+    fill_alpha=0.6,
+    line_color="white",
+    line_width=1,
     )
 p_county_map.add_layout(color_bar, 'right')
 
