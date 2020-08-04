@@ -31,3 +31,13 @@ The bash shell script `code/run_full_map_site_update.sh` runs all the necessary 
 * COVID-19 Data on States from [The COVID Tracking Project](https://covidtracking.com) or on [GitHub](https://github.com/COVID19Tracking/covid-tracking-data)
 * COVID-19 Data on Counties from [The John Hopkins University Coronavirus Resource Center](https://coronavirus.jhu.edu)
      or on [GitHub](https://github.com/CSSEGISandData/COVID-19.gi)
+
+## Tasklist
+- [x] Implement using external json files for data.
+- [ ] Generate a cumulative USA time history graph.
+- [ ] Fix/Workaround bug in Bokeh where patches with multiple polygons (NaN separated) seem to draw repeatedly (alpha will be wrong)
+- [ ] Make a world map similar to the states map/graph.
+- [ ] Incorporate additional data available for states
+- [ ] New map plot with customizable time history data graph.
+- [ ] Rework the data structures generation with multithreading.
+- [ ] Rework the data structures for efficiency and streamlining.  
