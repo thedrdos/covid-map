@@ -1,48 +1,40 @@
+# List of scripts to run
+script_list=(
+"get_data_for_maps.py"
+"process_data_for_maps.py"
+"make_external_datafiles.py"
+"map_4mon_standalone.py"
+"map_4mon_external_data.py"
+"make_website.py")
+
+# The following is the actual script execution
 SECONDS=0
 dur_arr=(0)
-echo "##########################################"
-echo "Running: get_data_for_maps.py"
-echo "##########################################"
-python get_data_for_maps.py || exit 1
-dur_arr+=($SECONDS)
-echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
+i=0
+for s in ${script_list[@]};
+do
+  ((i=i+1))
+  echo "#######################"
+  echo "Running: " $s
+  echo "#######################"
+  python $s || exit $i
 
-echo "##########################################"
-echo "Running: process_data_for_maps.py"
-echo "##########################################"
-python process_data_for_maps.py || exit 2
-dur_arr+=($SECONDS)
-echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
+  dur_arr+=($SECONDS)
+  echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
+done
 
-echo "##########################################"
-echo "Running: make_external_datafiles.py"
-echo "##########################################"
-python make_external_datafiles.py || exit 2
-dur_arr+=($SECONDS)
-echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
-
-echo "##########################################"
-echo "Running: map_4mon_standalone.py"
-echo "##########################################"
-python map_4mon_standalone.py || exit 3
-dur_arr+=($SECONDS)
-echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
-
-echo "##########################################"
-echo "Running: map_4mon_external_data.py"
-echo "##########################################"
-python map_4mon_external_data.py || exit 3
-dur_arr+=($SECONDS)
-echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
-
-echo "##########################################"
-echo "Running: make_website.py"
-echo "##########################################"
-python make_website.py || exit 4
-dur_arr+=($SECONDS)
-echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
-
-echo "##########################################"
+# Provide a summary of script runtimes
+echo "======================="
+echo "Summary:"
+echo "======================="
+i=0
+for s in ${script_list[@]};
+do
+  ((i=i+1))
+  echo $s
+  echo "    $(($((${dur_arr[$i]}-${dur_arr[$i-1]})) / 60)) minutes and $(($((${dur_arr[$i]}-${dur_arr[$i-1]})) % 60)) seconds."
+done
+echo "======================="
 echo "Script completed in: "
 duration=$SECONDS
-echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds."
+echo "    $(($duration / 60)) minutes and $(($duration % 60)) seconds."

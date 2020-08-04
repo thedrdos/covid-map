@@ -33,7 +33,7 @@ The bash shell script `code/run_full_map_site_update.sh` runs all the necessary 
      or on [GitHub](https://github.com/CSSEGISandData/COVID-19.gi)
 
 ## Tasklist
-- [x] Implement using external json files for data.
+- [x] Implement maps using external json files for data.
 - [ ] Generate a cumulative USA time history graph.
 - [ ] Fix/Workaround bug in Bokeh where patches with multiple polygons (NaN separated) seem to draw repeatedly (alpha will be wrong)
 - [ ] Make a world map similar to the states map/graph.
