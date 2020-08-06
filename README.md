@@ -41,3 +41,4 @@ The bash shell script `code/run_full_map_site_update.sh` runs all the necessary 
 - [ ] New map plot with customizable time history data graph.
 - [ ] Rework the data structures generation with multithreading.
 - [ ] Rework the data structures for efficiency and streamlining.  
+- [ ] Make option to switch normalization on/off

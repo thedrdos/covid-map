@@ -20,11 +20,28 @@ MapData = {
       'filename': '#_map.json', # string with json file for this entry
       'nan_code': -123456789,   # number, used to encode NaN in the json
       'data': { # ColumnDataSource compliant dictionary, defining patches
-            'x': [[],[],[],...], # list of number lists, each a patch corresponding to a sublocation
-            'y': [[],[],[],...], # same for y coordinates
-            'name':['sublocation','sublocation',...]
+            'x': list-of-list-of-list-of-lists MultiPolygon Bokeh input, # list of number lists, each a patch corresponding to a sublocation
+            # Format description:
+            # [multipolygon[0], multipolygon[1], ...]
+            # multipolygon[i] correspond to sublocation[i]
+            # multipolyton[i] = [polygon[0],polygon[1],...]
+            # polygon[k] is the k-th polygon in multipolygon[i]
+            # polygon[k] = [exterior_x,interior_x[0],interior_x[1],...]
+            # exterior_x is a list of exterior points of polygon[k]
+            # interior_x[n] is the n-th list of interior points of polygon[k], interior_x can be empty
+            # In summary: (numbering brackets for clarity)
+            # 1[multipolygons
+            #   2[multipolygon
+            #     3[polygon
+            #         4[exterior_boundary_points
+            #           4],
+            #         4[interior_boundary_points
+            #           4],
+            # there can be many or no lists of interior boundaries
+            #          ... 3],... 2],... 1]
+            'y': [[[[],...],...],...], # same for y coordinates
+            'name':[sublocation[0],sublocation[1],...]
             # names of corresponding sublocations,
-            # name is non-unique as one sublocation can be tied to multiple patches
             'property with current covid data': [ , , , ...] # number for each sublocations
             :
             : # more properties

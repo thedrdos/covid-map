@@ -78,7 +78,6 @@ for n,data in enumerate(datas):
 
         # Remove dates with no reported cases and calculate active positive cases
         df = df[df['positive']!=0]
-        df["positiveActive"] = df["positive"].fillna(0)-df["recovered"].fillna(0)-df["death"].fillna(0)
 
         # Fill in x day old cases as recovered if no recovery data is available
         rdays = 15 # assumed number of days it takes to recovere
@@ -89,6 +88,9 @@ for n,data in enumerate(datas):
             stmp = df['positive']
             df['recovered']=stmp.shift(rdays).fillna(0)-df['death']
         df['recovered'] = df['recovered'].replace(0, float('NaN'))
+
+        # Calculate positive active cases
+        df["positiveActive"] = df["positive"].fillna(0)-df["recovered"].fillna(0)-df["death"].fillna(0)
 
         # Normalize to people per million (func of population)
         columns_to_normalize = ['death','positiveActive','recovered','positive','hospitalizedCurrently','inIcuCurrently']
