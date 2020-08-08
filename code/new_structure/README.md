@@ -3,7 +3,7 @@
 Make the data structures
 * More consistent and simple
 * Facilitate more efficient processing
-* Avoid Bokeh bug where patches defined by multiple polygons separated by `NaN` seem to result in multiple overlaying patches (`fill_alpha` will look wrong).
+* Avoid Bokeh bug where patches defined by multiple polygons separated by `NaN` seem to result in multiple overlaying patches (`fill_alpha` will look wrong). This dataset will rely on using multi_polygons instead.
 
 ## Proposed Data Structure
 Two main types of data, ones affiliated with maps (patches) and ones with graphs (lines/bars).  Represented below with Python ish descriptive pseudo code:
