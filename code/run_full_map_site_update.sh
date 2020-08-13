@@ -35,6 +35,7 @@ do
   echo "    $(($((${dur_arr[$i]}-${dur_arr[$i-1]})) / 60)) minutes and $(($((${dur_arr[$i]}-${dur_arr[$i-1]})) % 60)) seconds."
 done
 echo "======================="
+echo "$(date)" # Show todays date
 echo "Script completed in: "
 duration=$SECONDS
 echo "    $(($duration / 60)) minutes and $(($duration % 60)) seconds."
