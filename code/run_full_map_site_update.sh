@@ -4,7 +4,8 @@ script_list=(
 "process_data_and_maps.py"
 "make_external_datafiles.py"
 "map_4mon_external_data.py"
-"map_4mon_standalone.py")
+"map_4mon_standalone.py"
+"make_website.py")
 
 # The following is the actual script execution
 SECONDS=0
