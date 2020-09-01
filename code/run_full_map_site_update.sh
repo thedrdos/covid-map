@@ -1,11 +1,10 @@
 # List of scripts to run
 script_list=(
-"get_data_for_maps.py"
-"process_data_for_maps.py"
+"match_data_and_maps.py"
+"process_data_and_maps.py"
 "make_external_datafiles.py"
-"map_4mon_standalone.py"
 "map_4mon_external_data.py"
-"make_website.py")
+"map_4mon_standalone.py")
 
 # The following is the actual script execution
 SECONDS=0
