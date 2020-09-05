@@ -20,7 +20,7 @@ filenames = filedialog.askopenfilenames(initialdir='.',title = "Select file", fi
 
 for f in filenames:
     fname = os.path.relpath(f)
-    #forg = shutil.copy(fname,fname+"_org")  # Copy the file for backup purposes
+    forg = shutil.copy(fname,fname+"_org")  # Copy the file for backup purposes
     print(fname+" -> " +os.path.relpath(forg))
     fr = open(forg,'r')     # Read the copied original, and write to a new file, this fixes the stupid end of line problem
     fw = open(fname,'w')
