@@ -301,7 +301,7 @@ for d in ds:
 # # X axis formatting:
 # mm = [source.data['date'].min()- np.timedelta64(1,'D'), source.data['date'].max()+- np.timedelta64(1,'D')]
 p_state_covid.x_range = Range1d( # Set the range of the axis
-    ax_limits['x'][0],ax_limits['x'][1],bounds=ax_limits['x']
+    ax_limits['x'][0],ax_limits['x'][1],#bounds=ax_limits['x']
  )
 # #p_state_covid.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
 p_state_covid.xaxis.major_label_orientation = -np.pi/3 # slant the labels
@@ -484,7 +484,7 @@ for d in ds:
 # # X axis formatting:
 # mm = [source.data['date'].min()- np.timedelta64(1,'D'), source.data['date'].max()+- np.timedelta64(1,'D')]
 p_county_covid.x_range = Range1d( # Set the range of the axis
-    ax_limits['x'][0],ax_limits['x'][1],bounds=ax_limits['x']
+    ax_limits['x'][0],ax_limits['x'][1],#bounds=ax_limits['x']
  )
 # #p_county_covid.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
 p_county_covid.xaxis.major_label_orientation = -np.pi/3 # slant the labels
