@@ -7,8 +7,8 @@ Well sourced COVID19 data with the following key features:
 * Normalization with respect to population (crude measure of societal pressure)
 
 ## Maps
-* [USA Map Online 4-month of data history](plots/map_4mon_external_data.html) (small file, loads fast, but fetches data online)
-* [USA Map Standalone 4-month of data history](plots/map_4mon_standalone.html) (large file, may take a few sec to load)
+* [USA Map Online, full length data history, default 4-month view ](plots/map_4mon_external_data.html) (small file, loads fast, but fetches data online)
+* [USA Map Standalone, truncated 4-month data history](plots/map_4mon_standalone.html) (large file, may take a few sec to load)
 
 ## Implementation
 
