@@ -321,13 +321,41 @@ select2.js_on_change("value", CustomJS(args={
     line.data_source.change.emit()
 
 """))
+
+"""
+# %% Make a button
+________________________________________________________________________________
+"""
+buttons = {}
+buttons['test'] = Toggle(label="Test",visible=True, button_type='primary') #
+buttons['test'].js_on_change('active',CustomJS(args={'p':p},code="""
+                  if (cb_obj.active == false){
+                      console.log(p.x_range)
+                      console.log(p.x_range.follow)
+                      console.log(p.x_range.start)
+                      console.log(p.x_range.end)
+                      p.x_range.setv({'start':-1.4e7,'end':-7.4e6})
+                      p.change.emit()
+                  }
+                  else{
+                      console.log(p.x_range)
+                      console.log(p.x_range.follow)
+                      console.log(p.x_range.start)
+                      console.log(p.x_range.end)
+                      p.x_range.setv({'start':1.4e7,'end':7.4e6})
+                      //p.x_range.setv({'start':NaN,'end':NaN})
+                      p.change.emit()
+                      }
+                  """))
+
+
 """
 # %% Combine all the graphs
 ________________________________________________________________________________
 """
 
 # Layout the figures and show them
-layout = column(row(select,p),row(select2,p2),
+layout = column(buttons['test'],row(select,p),row(select2,p2),
                 sizing_mode='scale_width')
 layout.margin = (4,20,4,20) # top, right, bottom, left
 save(layout,template=template_ext_js(['jquary','pako']))
