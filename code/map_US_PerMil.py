@@ -803,6 +803,8 @@ buttons['reset_state_map'].js_on_event(events.ButtonClick,CustomJS(args={'p_stat
                   p_state_map.reset.emit();
                   """))
 
+
+
 """
 # %% Make data graphs reset on doubletap
 """
@@ -810,6 +812,7 @@ for p in [p_state_covid,p_county_covid]:
     p.js_on_event('doubletap',CustomJS(args={'p':p,},code="""
     p.reset.emit()
     """))
+
 
 # %% Make heading for the whole thing
 """
