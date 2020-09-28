@@ -150,10 +150,10 @@ with gzip.GzipFile(ext_datafiles['path']+ext_datafiles['location_to_filename'][i
 init_map = init_mapfile['data']
 
 # Create source data structure and initialize state map
-source_state_data = ColumnDataSource(init_data)
-source_state_map = ColumnDataSource(init_map)
+source_world_data = ColumnDataSource(init_data)
+source_world_map = ColumnDataSource(init_map)
 # Erase the underlying data to reduce the html filesize (will be loaded upon user tap feedback)
-source_state_data.data  = {k:[] for k in source_state_data.data}
+source_world_data.data  = {k:[] for k in source_world_data.data}
 
 """
 # %% Make State graph for COVID data
@@ -177,10 +177,10 @@ ax_limits = {
 # Make the bar and line plots
 glyphs = []
 
-p_state_covid = figure(x_axis_type='datetime',y_axis_type="linear",
+p_world_covid = figure(x_axis_type='datetime',y_axis_type="linear",
     title='(Tap a state on the map above to show the corresponding COVID data here)',
     #plot_width=800, plot_height=600,
-    tools="ypan,xpan,wheel_zoom,box_zoom,reset", active_scroll=None, active_drag='ypan',
+    tools="ypan,xpan,ywheel_zoom,xwheel_zoom,ybox_zoom,xbox_zoom,box_zoom,reset", active_scroll=None, active_drag='ypan',
     toolbar_location=plot_settings['toolbar_location'],
     sizing_mode = 'scale_width',
     aspect_ratio = 2,
@@ -191,7 +191,7 @@ p_state_covid = figure(x_axis_type='datetime',y_axis_type="linear",
 # Y left Axis, Draw vertical bars,
 yleft = {
     'label':  "Bar Graph: # per Million",
-    'source': source_state_data,
+    'source': source_world_data,
     'x': 'date',
     'y': ['positiveActivePerMil','deathPerMil','recoveredPerMil'],
     'color': ["blue","black","orange"],
@@ -202,7 +202,7 @@ yleft = {
     'limits': ax_limits['yl'],
     }
 yleft['name']=yleft['y']
-vg = p_state_covid.vbar_stack(
+vg = p_world_covid.vbar_stack(
         x=yleft['x'], stackers=yleft['y'], color=yleft['color'],
         legend_label=yleft['legend_label'],
         source=yleft['source'],
@@ -212,14 +212,14 @@ vg = p_state_covid.vbar_stack(
         )
 glyphs = glyphs + [g for g in vg]
 
-p_state_covid.yaxis.axis_label = yleft['label']
-p_state_covid.yaxis.formatter=NumeralTickFormatter(format="0,0.0")
-p_state_covid.y_range = Range1d(start=yleft['limits'][0],end=yleft['limits'][1])#, bounds=yleft['limits'])
+p_world_covid.yaxis.axis_label = yleft['label']
+p_world_covid.yaxis.formatter=NumeralTickFormatter(format="0,0.0")
+p_world_covid.y_range = Range1d(start=yleft['limits'][0],end=yleft['limits'][1])#, bounds=yleft['limits'])
 
 # Setup for Y right axis:
 yright = {
     'label':    "Line Graphs: # increase per Million",
-    'source':   source_state_data,
+    'source':   source_world_data,
     'x':        'date',
     'limits':   ax_limits['yr'],
     'y_range_name' : 'yr_range',
@@ -251,13 +251,13 @@ for n,y in enumerate(yright_each['y']):
 
 
 # Make Y Right Axis:
-p_state_covid.extra_y_ranges[yright['y_range_name']] = Range1d(start=yright['limits'][0],end=yright['limits'][1])
-p_state_covid.add_layout(LinearAxis(y_range_name=yright['y_range_name']), "right")
-p_state_covid.yaxis[1].axis_label = yright['label']
+p_world_covid.extra_y_ranges[yright['y_range_name']] = Range1d(start=yright['limits'][0],end=yright['limits'][1])
+p_world_covid.add_layout(LinearAxis(y_range_name=yright['y_range_name']), "right")
+p_world_covid.yaxis[1].axis_label = yright['label']
 
 for n,y in enumerate(yright_each['y']):
     glyphs.append(
-        p_state_covid.line(
+        p_world_covid.line(
             y_range_name=yright['y_range_name'],
             source=yright['source'],
             x=yright['x'],
@@ -278,7 +278,7 @@ zero_span = Span(
                     line_dash='solid', line_width=3, line_alpha=0.4,
                     y_range_name=yright['y_range_name']
                     )
-p_state_covid.add_layout(zero_span)
+p_world_covid.add_layout(zero_span)
 
 # Weekly span marks
 ds = np.arange(ax_limits['x'][0],ax_limits['x'][1],dtype='datetime64[D]');
@@ -288,7 +288,7 @@ for d in ds:
     if ((np.timedelta64(ds.max()-d)/day)%7)==0:
             ts = (np.datetime64(d) - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
             wloc = ts*1000 # get the week mark location in a format compatible with annotations
-            p_state_covid.add_layout(
+            p_world_covid.add_layout(
                 Span(location=wloc,
                       dimension='height', line_color='gray',
                       line_dash='dashed', line_width=2, line_alpha=0.5,
@@ -297,20 +297,20 @@ for d in ds:
 
 # # X axis formatting:
 # mm = [source.data['date'].min()- np.timedelta64(1,'D'), source.data['date'].max()+- np.timedelta64(1,'D')]
-p_state_covid.x_range = Range1d( # Set the range of the axis
+p_world_covid.x_range = Range1d( # Set the range of the axis
     ax_limits['x'][0],ax_limits['x'][1],#bounds=ax_limits['x']
  )
-# #p_state_covid.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
-p_state_covid.xaxis.major_label_orientation = -np.pi/3 # slant the labels
+# #p_world_covid.xaxis[0].ticker.desired_num_ticks =round(np.busday_count(np.datetime64(source.data['date'].min(),'D'),np.datetime64(source.data['date'].max(),'D'))/3); # prefer number of labels (divide by 7 for week)
+p_world_covid.xaxis.major_label_orientation = -np.pi/3 # slant the labels
 dtformat = "%b-%d";
-p_state_covid.xaxis.formatter=formatter=DatetimeTickFormatter( # Always show the same date formatting regardless of zoom
+p_world_covid.xaxis.formatter=formatter=DatetimeTickFormatter( # Always show the same date formatting regardless of zoom
     days=dtformat,
     months=dtformat,
     hours=dtformat,
     minutes=dtformat)
 
 # Add legend
-p_state_covid.legend.location = "top_left"
+p_world_covid.legend.location = "top_left"
 
 # Add a hover tool
 hover = HoverTool()
@@ -324,16 +324,16 @@ hover.formatters={
         '$name'     : 'printf' # use 'printf' formatter for the name of the column
     }
 hover.renderers = glyphs
-p_state_covid.add_tools(hover)
+p_world_covid.add_tools(hover)
 
 # # Extra formatting
-# for ax in p_state_covid.yaxis:
+# for ax in p_world_covid.yaxis:
 #     ax.axis_label_text_font_style = 'bold'
 #     ax.axis_label_text_font_size = '16pt'
-# p_state_covid.title.text_font_size = '20pt'
-# p_state_covid.title.text_font_style = 'italic'
+# p_world_covid.title.text_font_size = '20pt'
+# p_world_covid.title.text_font_style = 'italic'
 
-glyphs_covid_state = glyphs
+glyphs_covid_world = glyphs
 
 # %% Make Buttons for state graph
 """
@@ -342,19 +342,19 @@ ________________________________________________________________________________
 """
 buttons = {}
 buttons['state_covid_data'] = Toggle(label="Hide Time History Graph",visible=False, button_type='primary') #
-buttons['state_covid_data'].js_on_change('active',CustomJS(args={'p_state_covid':p_state_covid},code="""
+buttons['state_covid_data'].js_on_change('active',CustomJS(args={'p_world_covid':p_world_covid},code="""
                   if (cb_obj.active == false){
                       cb_obj.label  = "Show Time History Graph"
-                      p_state_covid.visible = false
+                      p_world_covid.visible = false
                   }
                   else{
                       cb_obj.label  = "Hide Time History Graph"
-                      p_state_covid.visible = true
+                      p_world_covid.visible = true
                       }
                   """))
-buttons['reset_state_covid_data'] = Button(label="Reset Time History Graph", visible=False, button_type='default')
-buttons['reset_state_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'p_state_covid':p_state_covid},code="""
-                  p_state_covid.reset.emit();
+buttons['reset_world_covid_data'] = Button(label="Reset Time History Graph", visible=False, button_type='default')
+buttons['reset_world_covid_data'].js_on_event(events.ButtonClick,CustomJS(args={'p_world_covid':p_world_covid},code="""
+                  p_world_covid.reset.emit();
                   """))
 """
 %% Setup color map
@@ -450,9 +450,9 @@ def minmax(xx):
     minxx = np.nanmin([np.nanmin(x) for x in xx])
     maxxx = np.nanmax([np.nanmax(x) for x in xx])
     return (minxx, maxxx)
-p_state_map = figure(
+p_world_map = figure(
     title="World - Colors show last weeks average daily increase in positive cases per 1 million people in each area",
-    #x_range=minmax(DS_States_map.data['xc']), y_range=minmax(DS_States_map.data['yc']),
+    #x_range=minmax(DS_worlds_map.data['xc']), y_range=minmax(DS_worlds_map.data['yc']),
     # x_range=(-1.4e7,-7.4e6),
     # y_range=(2.88e6,6.28e6),
     # sizing_mode='stretch_width',
@@ -464,27 +464,27 @@ p_state_map = figure(
     aspect_ratio = 2,
     match_aspect=True,
     )
-p_state_map.grid.grid_line_color = None
+p_world_map.grid.grid_line_color = None
 bztool_s = BoxZoomTool(match_aspect=True)
-p_state_map.add_tools(bztool_s)
-p_state_map.toolbar.active_drag=  None #bztool_s
+p_world_map.add_tools(bztool_s)
+p_world_map.toolbar.active_drag=  None #bztool_s
 
 # Add the map tiles
 tile_provider = get_provider(CARTODBPOSITRON_RETINA)
-p_state_map.add_tile(tile_provider)
+p_world_map.add_tile(tile_provider)
 
 # Add the states
-# patches_states = p_state_map.patches('x', 'y', source=DS_States_map,
+# patches_worlds = p_world_map.patches('x', 'y', source=DS_worlds_map,
 #           fill_color={'field': 'current_positive_increase_mav', 'transform': color_mapper},
 #           fill_alpha=0.6, line_color="white", line_width=1)
-patches_states = p_state_map.multi_polygons(
-    xs='x', ys='y', source=source_state_map,
+patches_worlds = p_world_map.multi_polygons(
+    xs='x', ys='y', source=source_world_map,
     fill_color={'field': 'positiveIncreaseMAVPerMil', 'transform': color_mapper},
     fill_alpha=0.6,
     line_color="white",
     line_width=1,
     )
-p_state_map.add_layout(color_bar, 'right')
+p_world_map.add_layout(color_bar, 'right')
 # Add the hover tool to show the state name and number of counties
 hoverm = HoverTool()
 hoverm.tooltips=[
@@ -496,20 +496,20 @@ hoverm.tooltips=[
     ('Positive Active Cases',"@positiveActive{0,0.}"),
     ('Deaths',"@death{0,0.}"),
 ]
-p_state_map.add_tools(hoverm)
+p_world_map.add_tools(hoverm)
 
 # Add taptool to select from which state to show all the counties
-with open(javascript_path+'callback_state_map.js','r') as f:
-    callback_state_map = f.read()
-callbacktap = CustomJS(args={'index_to_state_name':init_map['name'],
-                             'glyphs_covid_state':glyphs_covid_state,
+with open(javascript_path+'callback_world_map.js','r') as f:
+    callback_world_map = f.read()
+callbacktap = CustomJS(args={'index_to_world_name':init_map['name'],
+                             'glyphs_covid_world':glyphs_covid_world,
                              'ext_datafiles':ext_datafiles,
-                             'p_state_covid':p_state_covid, # state covid data plot
-                             'tb':[buttons['state_covid_data'],buttons['reset_state_covid_data'],p_state_covid],
+                             'p_world_covid':p_world_covid, # state covid data plot
+                             'tb':[buttons['state_covid_data'],buttons['reset_world_covid_data'],p_world_covid],
                              'datetime_made': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                              },
-                       code=callback_state_map)
-taptool = p_state_map.select(type=TapTool)
+                       code=callback_world_map)
+taptool = p_world_map.select(type=TapTool)
 taptool.callback = callbacktap
 
 #%% Make State map buttons
@@ -517,14 +517,14 @@ taptool.callback = callbacktap
 #%% Make State map buttons
 ________________________________________________________________________________
 """
-buttons['reset_state_map'] = Button(label="Reset Map", visible=True, button_type='warning')
-buttons['reset_state_map'].js_on_event(events.ButtonClick,CustomJS(args={'p_state_map':p_state_map},code="""
-                  p_state_map.reset.emit();
+buttons['reset_world_map'] = Button(label="Reset Map", visible=True, button_type='warning')
+buttons['reset_world_map'].js_on_event(events.ButtonClick,CustomJS(args={'p_world_map':p_world_map},code="""
+                  p_world_map.reset.emit();
                   """))
 """
 # %% Make data graphs reset on doubletap
 """
-for p in [p_state_covid]:
+for p in [p_world_covid]:
     p.js_on_event('doubletap',CustomJS(args={'p':p,},code="""
     p.reset.emit()
     """))
@@ -571,13 +571,13 @@ ________________________________________________________________________________
 """
 
 # Layout the figures and show them
-p_state_map.sizing_mode = 'scale_width'
-p_state_covid.sizing_mode = 'scale_width'
+p_world_map.sizing_mode = 'scale_width'
+p_world_covid.sizing_mode = 'scale_width'
 layout = column(heading,
-                row(p_state_map,sizing_mode='scale_width'),
-                row(buttons['reset_state_map'],buttons['state_covid_data'],buttons['reset_state_covid_data'],sizing_mode='scale_width',margin=(0,20,0,20),
+                row(p_world_map,sizing_mode='scale_width'),
+                row(buttons['reset_world_map'],buttons['state_covid_data'],buttons['reset_world_covid_data'],sizing_mode='scale_width',margin=(0,20,0,20),
                     ),
-                p_state_covid,
+                p_world_covid,
                 row(footer,sizing_mode='scale_width'),
                 sizing_mode='scale_width')
 layout.margin = (4,20,4,20) # top, right, bottom, left

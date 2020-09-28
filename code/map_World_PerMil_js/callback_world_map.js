@@ -2,12 +2,12 @@
 //
 // Provided arguments:
 // args={'patches_counties': patches_counties,
-//      'index_to_state_name':init_map['name'],
-//      'glyphs_covid_state':glyphs_covid_state,
+//      'index_to_world_name':init_map['name'],
+//      'glyphs_covid_world':glyphs_covid_world,
 //      'ext_datafiles':ext_datafiles,
 //      'p_county_map':p_county_map,
-//      'p_state_covid':p_state_covid, # state covid data plot
-//      'tb':[buttons['state_covid_data'],buttons['reset_state_covid_data'],buttons['reset_county_map']],
+//      'p_world_covid':p_world_covid, # state covid data plot
+//      'tb':[buttons['state_covid_data'],buttons['reset_world_covid_data'],buttons['reset_county_map']],
 //      'datetime_made': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
 if (cb_data.source.selected.indices.length > 0) {
   var ind = cb_data.source.selected.indices[0]
@@ -25,9 +25,9 @@ if (cb_data.source.selected.indices.length > 0) {
     // console.log('Datafile read: ' + location + ' at ' + filename_data)
     from_datafile['data'] = rep_nan_code(from_datafile['data'], from_datafile['nan_code'])
     from_datafile['data'] = correct_date_format(from_datafile['data'])
-    for (var i = 0; i < glyphs_covid_state.length; i++) {
-      glyphs_covid_state[i].data_source.data = from_datafile['data'] //DS_States_COVID[state_name].data
-      glyphs_covid_state[i].data_source.change.emit();
+    for (var i = 0; i < glyphs_covid_world.length; i++) {
+      glyphs_covid_world[i].data_source.data = from_datafile['data'] //DS_worlds_COVID[state_name].data
+      glyphs_covid_world[i].data_source.change.emit();
     }
   })
 
@@ -49,7 +49,7 @@ if (cb_data.source.selected.indices.length > 0) {
     tb[i].visible = true
   }
   // Update title
-  p_state_covid.title.text = state_name + ": COVID data time history, population normalized" //   (Tap a state on the map above to show the corresponding data here)"
+  p_world_covid.title.text = state_name + ": COVID data time history, population normalized" //   (Tap a state on the map above to show the corresponding data here)"
 }
 
 // ----------------------------------------

@@ -7,6 +7,8 @@ Well sourced COVID19 data with the following key features:
 * Normalization with respect to population (crude measure of societal pressure)
 op
 ## Maps
+* [World Map Online, full length data history](plots/map_World_PerMil.html) (small file, loads fast, but fetches data online)
+* [USA Map Online, full length data history](plots/map_US_PerMil.html) (small file, loads fast, but fetches data online)
 * [USA Map Online, full length data history, default 4-month view ](plots/map_4mon_external_data.html) (small file, loads fast, but fetches data online)
 * [USA Map Standalone, truncated 4-month data history](plots/map_4mon_standalone.html) (large file, may take a few sec to load)
 
@@ -20,5 +22,5 @@ Code written in Python (and Javascript) to generate interactive html page.
 * GitHub repository for this project: [https://github.com/thedrdos/covid-map](https://github.com/thedrdos/covid-map)
 * State and County Geographical Data from [The US Census Bureau](http://www2.census.gov/geo/tiger/)
 * COVID-19 Data on States from [The COVID Tracking Project](https://covidtracking.com) or on [GitHub](https://github.com/COVID19Tracking/covid-tracking-data)
-* COVID-19 Data on Counties from [The John Hopkins University Coronavirus Resource Center](https://coronavirus.jhu.edu)
+* COVID-19 Data on Countries and Counties from [The John Hopkins University Coronavirus Resource Center](https://coronavirus.jhu.edu)
      or on [GitHub](https://github.com/CSSEGISandData/COVID-19.gi)

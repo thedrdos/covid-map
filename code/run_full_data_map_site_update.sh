@@ -5,6 +5,8 @@ script_list=(
 "make_external_datafiles.py"
 "map_4mon_external_data.py"
 "map_4mon_standalone.py"
+"map_US_PerMil.py"
+"map_World_PerMil.py"
 "make_website.py")
 
 # The following is the actual script execution
