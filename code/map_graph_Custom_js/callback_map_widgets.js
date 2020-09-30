@@ -132,15 +132,20 @@ switch (event) {
           date_range_slider.disabled = true;
 
           var start_date = new Date(date_range_slider.value[0])
-          var end_date = new Date(date_range_slider.value[1])
-          var day = date_range_slider.value[0];
-          var day_str = new Date(day).toLocaleDateString("en-US")
-          console.log(day)
-          console.log(day_str)
+          var end_date   = new Date(date_range_slider.value[1])
+
+          var day = start_date;
+          day.setDate(day.getDate()+0.5)
+
+          var date_format_options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+          var day_str = day.toLocaleDateString("en-US",date_format_options)
+
+          console.log(start_date.toLocaleDateString("en-US",date_format_options))
+          console.log(end_date.toLocaleDateString("en-US",date_format_options))
+
           var next_day = new Date(day)
           next_day.setDate(next_day.getDate() + 1)
-          date_range_slider.value = [next_day.getTime(), end_date.getTime()];
-          date_range_slider.change.emit()
+
 
           // Find all locations on the map
           var locations = mpoly.data_source.data['location']
@@ -155,7 +160,7 @@ switch (event) {
               data['data'] = rep_nan_code(data['data'], data['nan_code'])
               data['data'] = correct_date_format(data['data'])
 
-              const sel_date = find_in_sorted_array(day, data['data']['date'])
+              const sel_date = find_in_sorted_array(day.getTime(), data['data']['date'])
 
               // Update the map data with the data for the selected date
               for (const k in mpoly.data_source.data) {
@@ -173,10 +178,12 @@ switch (event) {
 
                 if (next_day.getTime() > end_date.getTime()) {
                   date_range_slider.value = [end_date.getTime(), end_date.getTime()];
-                  radioGroup_play_controls = play_controls.pause;
+                  radioGroup_play_controls.active = play_controls.pause;
                 } else {
                   date_range_slider.value = [next_day.getTime(), end_date.getTime()];
                 }
+                date_range_slider.change.emit()
+
                 switch (radioGroup_play_controls.active) {
                   case play_controls.step:
                     radioGroup_play_controls = play_controls.pause;
