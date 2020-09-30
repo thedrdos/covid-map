@@ -536,7 +536,7 @@ footer = Div(text="""
 """)
 
 data_notes = Div(text="""
-<b> Data Defintions: </b>
+<h4> Data Defintions: </h4>
 <ul>
     <li>Compatible with the <a href="https://covidtracking.com/about-data/data-definitions"> COVID Tracking Project data defintions</a>. </li>
     <li>Countries may have `positive`, `death`, `recovered`, and their derivatives available.</li>
@@ -569,7 +569,7 @@ if len(sys.argv)==1:
                        +[Div(text="<center><i> Time History Animation </i></center>")]
                        #+[Spacer(background='black',height=2)]
                        +[[spinner_minStepTime,radioGroup_play_controls] ,date_range_slider], p_map],
-                   [selectors_graph, p_graph],
+                   [selectors_graph+[data_notes], p_graph],
                    footer
                    ])
     lout.margin = (4, 20, 4, 20)  # top, right, bottom, left
