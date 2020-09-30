@@ -9,6 +9,8 @@ op
 ## Maps
 * [World Map Online, full length data history](plots/map_World_PerMil.html) (small file, loads fast, but fetches data online)
 * [USA Map Online, full length data history](plots/map_US_PerMil.html) (small file, loads fast, but fetches data online)
+* [World/USA/County Map Online, Customizable, with history Animation, full length data history](plots/map_graph_Custom.html) (small file, loads fast, but fetches data online)
+* [More mobile friendly version layout of the map above](plots/map_graph_Custom_mobile.html) (small file, loads fast, but fetches data online)
 * [USA Map Online, full length data history, default 4-month view ](plots/map_4mon_external_data.html) (small file, loads fast, but fetches data online)
 * [USA Map Standalone, truncated 4-month data history](plots/map_4mon_standalone.html) (large file, may take a few sec to load)
 
