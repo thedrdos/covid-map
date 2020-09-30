@@ -15,14 +15,14 @@ var filename_map = ''
 var hash = ''
 // Get other models/tooltips
 const button_continental_us_only = window.Bokeh.documents[0].get_model_by_name('button_continental_us_only')
-const radioGroup_level_select    = window.Bokeh.documents[0].get_model_by_name('radioGroup_level_select')
-const date_range_slider          = window.Bokeh.documents[0].get_model_by_name('date_range_slider')
-const radioGroup_play_controls   = window.Bokeh.documents[0].get_model_by_name('radioGroup_play_controls')
+const radioGroup_level_select = window.Bokeh.documents[0].get_model_by_name('radioGroup_level_select')
+const date_range_slider = window.Bokeh.documents[0].get_model_by_name('date_range_slider')
+const radioGroup_play_controls = window.Bokeh.documents[0].get_model_by_name('radioGroup_play_controls')
 const play_controls = {
-    'play': 0,
-    'step': 1,
-    'pause': 2,
-  }
+  'play': 0,
+  'step': 1,
+  'pause': 2,
+}
 
 switch (event) {
   case 'button_continental_us_only':
@@ -112,86 +112,83 @@ switch (event) {
 
 
   case 'date_range_slider':
-    // switch (radioGroup_play_controls.active){
-    //   case play_controls.pause:
-    //   break;
-    //   case play_controls.step:
-    //   radioGroup_play_controls.active = play_controls.pause;
-    //   break;
-    //   case play_controls.play:
-    //   break;
-    // }
-    console.log('change in data range slider')
-    break;
-
-  case 'radioGroup_play_controls':
-    switch (radioGroup_play_controls.active){
-      case play_controls.pause:
-        date_range_slider.disabled = false;
-      break;
+    switch (radioGroup_play_controls.active) {
       case play_controls.step:
-        date_range_slider.disabled = true;
+        radioGroup_play_controls.active = play_controls.pause;
+        break;
       case play_controls.play:
-        date_range_slider.disabled = true;
-
-        var start_date = new Date(date_range_slider.value[0])
-        var end_date = new Date(date_range_slider.value[1])
-        var day = date_range_slider.value[0];
-        var day_str = new Date(day).toLocaleDateString("en-US")
-        console.log(day)
-        console.log(day_str)
-        var next_day = new Date(day)
-        next_day.setDate(next_day.getDate() + 1)
-        date_range_slider.value = [next_day.getTime(),end_date.getTime()];
-        date_range_slider.change.emit()
-
-      break;
+      case play_controls.pause:
+        break;
     }
-    if (false) {
 
-      var start_date = new Date(date_range_slider.value[0])
-      var end_date = new Date(date_range_slider.value[1])
-      var day = date_range_slider.value[0];
-      //console.log(day)
+    case 'radioGroup_play_controls':
+      switch (radioGroup_play_controls.active) {
+        case play_controls.pause:
+          date_range_slider.disabled = false;
+          break;
+        case play_controls.step:
+          date_range_slider.disabled = true;
+        case play_controls.play:
+          date_range_slider.disabled = true;
 
-      var day_str = new Date(day).toLocaleDateString("en-US")
+          var start_date = new Date(date_range_slider.value[0])
+          var end_date = new Date(date_range_slider.value[1])
+          var day = date_range_slider.value[0];
+          var day_str = new Date(day).toLocaleDateString("en-US")
+          console.log(day)
+          console.log(day_str)
+          var next_day = new Date(day)
+          next_day.setDate(next_day.getDate() + 1)
+          date_range_slider.value = [next_day.getTime(), end_date.getTime()];
+          date_range_slider.change.emit()
 
-      // Find all locations on the map
-      var locations = mpoly.data_source.data['location']
-      var cnt = 0
-      var t0 = performance.now()
-      // Load data for each location, and update the map with the data for the given date
-      for (const [n, loc] of locations.entries()) {
-        readJSONgz_fun(ext_datafiles['rel_path'] + ext_datafiles['location_to_filename'][loc] + '.json.gz', function() {
-          var data = JSON.parse(pako.inflate(this.response, {
-            to: 'string'
-          }));
-          data['data'] = rep_nan_code(data['data'], data['nan_code'])
-          data['data'] = correct_date_format(data['data'])
+          // Find all locations on the map
+          var locations = mpoly.data_source.data['location']
+          var cnt = 0
+          var t0 = performance.now()
+          // Load data for each location, and update the map with the data for the given date
+          for (const [n, loc] of locations.entries()) {
+            readJSONgz_fun(ext_datafiles['rel_path'] + ext_datafiles['location_to_filename'][loc] + '.json.gz', function() {
+              var data = JSON.parse(pako.inflate(this.response, {
+                to: 'string'
+              }));
+              data['data'] = rep_nan_code(data['data'], data['nan_code'])
+              data['data'] = correct_date_format(data['data'])
 
-          const sel_date = find_in_sorted_array(day, data['data']['date'])
+              const sel_date = find_in_sorted_array(day, data['data']['date'])
 
-          // Update the map data with the data for the selected date
-          for (const k in mpoly.data_source.data) {
-            if (k in data['data']) {
-              mpoly.data_source.data[k][n] = data['data'][k][sel_date['index']]
-            }
+              // Update the map data with the data for the selected date
+              for (const k in mpoly.data_source.data) {
+                if (k in data['data']) {
+                  mpoly.data_source.data[k][n] = data['data'][k][sel_date['index']]
+                }
+              }
+
+              cnt += 1
+              if (cnt >= locations.length) {
+                //console.log('count: '+cnt.toString())
+                //console.log('time: '+(performance.now()-t0).toString())
+                p_map.title.text = day_str;
+                mpoly.data_source.change.emit()
+
+                if (next_day.getTime() > end_date.getTime()) {
+                  date_range_slider.value = [end_date.getTime(), end_date.getTime()];
+                  radioGroup_play_controls = play_controls.pause;
+                } else {
+                  date_range_slider.value = [next_day.getTime(), end_date.getTime()];
+                }
+                switch (radioGroup_play_controls.active) {
+                  case play_controls.step:
+                    radioGroup_play_controls = play_controls.pause;
+                    break;
+                }
+              }
+            }, 10000)
           }
 
-          cnt += 1
-          if (cnt >= locations.length) {
-            //console.log('count: '+cnt.toString())
-            //console.log('time: '+(performance.now()-t0).toString())
-            p_map.title.text = day_str;
-            var next_day = new Date(day)
-            next_day.setDate(next_day.getDate() + 1)
-            date_range_slider.value[0] = next_day.getTime();
-            mpoly.data_source.change.emit()
-          }
-        }, 10000)
+          break;
       }
-    }
-    break;
+      break;
 }
 
 
