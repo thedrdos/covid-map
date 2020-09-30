@@ -16,7 +16,9 @@ var hash = ''
 // Get other models/tooltips
 const button_continental_us_only = window.Bokeh.documents[0].get_model_by_name('button_continental_us_only')
 const radioGroup_level_select = window.Bokeh.documents[0].get_model_by_name('radioGroup_level_select')
+const span_play_position = window.Bokeh.documents[0].get_model_by_name('span_play_position')
 const date_range_slider = window.Bokeh.documents[0].get_model_by_name('date_range_slider')
+const spinner_minStepTime = window.Bokeh.documents[0].get_model_by_name('spinner_minStepTime')
 const radioGroup_play_controls = window.Bokeh.documents[0].get_model_by_name('radioGroup_play_controls')
 const play_controls = {
   'play': 0,
@@ -25,6 +27,14 @@ const play_controls = {
 }
 
 switch (event) {
+  case 'graph_tap':
+    // Find nearest date in data and its index
+    var near_date = find_in_sorted_array(cb_obj.x, source_graph.data['date'])
+    var day = new Date(near_date['value'])
+    var sval = date_range_slider.value;
+    date_range_slider.value = [day.getTime(), sval[1]];
+    break;
+
   case 'button_continental_us_only':
     if (button_continental_us_only.active) {
       radioGroup_level_select.active = 1;
@@ -38,7 +48,7 @@ switch (event) {
         if (continental_states.includes(new_data['location'][i])) {
           // do nothing
         } else {
-          // remove non-continental states
+          // remove non-continental state
           for (var key in new_data) {
             new_data[key].splice(i, 1)
           }
@@ -80,11 +90,11 @@ switch (event) {
     }
 
     if (location.length > 0) {
-      console.log(location + ' selected')
+      //console.log(location + ' selected')
       if (location in ext_datafiles['location_to_mapfilename']) {
         filename_map = ext_datafiles['location_to_mapfilename'][location] + '.json.gz'
-        console.log(filename_map)
-        console.log(ext_datafiles['rel_path'] + filename_map)
+        //console.log(filename_map)
+        //console.log(ext_datafiles['rel_path'] + filename_map)
         readJSONgz_fun(ext_datafiles['rel_path'] + filename_map, function() {
           var data = JSON.parse(pako.inflate(this.response, {
             to: 'string'
@@ -96,6 +106,22 @@ switch (event) {
           } else {
             // Map is provided
             mpoly.data_source.data = data['data']
+            // Show the right date in the title
+            var day = new Date(data['data']['latestDate'][0] / 1e6);
+            const date_format_options = {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              timeZone: 'UTC'
+            };
+            const date_format_options2 = {
+              weekday: 'long',
+              timeZone: 'UTC'
+            };
+            // Including UTC as the timezone is important
+            var day_str = day.toLocaleDateString("en-US", date_format_options) + ", " + day.toLocaleDateString("en-US", date_format_options2)
+            p_map.title.text = day_str;
+
             mpoly.data_source.change.emit()
 
             if (location == 'US') {
@@ -112,6 +138,11 @@ switch (event) {
 
 
   case 'date_range_slider':
+    var start_date = new Date(date_range_slider.value[0])
+    var end_date = new Date(date_range_slider.value[1])
+    var day = start_date;
+    span_play_position.location = day.getTime();
+
     switch (radioGroup_play_controls.active) {
       case play_controls.step:
         radioGroup_play_controls.active = play_controls.pause;
@@ -121,27 +152,31 @@ switch (event) {
         break;
     }
 
+    // No break from date_range_slider, directly into radioGroup_play_controls
     case 'radioGroup_play_controls':
       switch (radioGroup_play_controls.active) {
         case play_controls.pause:
           date_range_slider.disabled = false;
           break;
         case play_controls.step:
-          date_range_slider.disabled = true;
         case play_controls.play:
           date_range_slider.disabled = true;
-
           var start_date = new Date(date_range_slider.value[0])
-          var end_date   = new Date(date_range_slider.value[1])
-
+          var end_date = new Date(date_range_slider.value[1])
           var day = start_date;
-          day.setDate(day.getDate()+0.5)
 
-          var date_format_options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-          var day_str = day.toLocaleDateString("en-US",date_format_options)
-
-          console.log(start_date.toLocaleDateString("en-US",date_format_options))
-          console.log(end_date.toLocaleDateString("en-US",date_format_options))
+          var date_format_options = {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            timeZone: 'UTC'
+          };
+          var date_format_options2 = {
+            weekday: 'long',
+            timeZone: 'UTC'
+          };
+          // Including UTC as the timezone is important
+          var day_str = day.toLocaleDateString("en-US", date_format_options) + ", " + day.toLocaleDateString("en-US", date_format_options2)
 
           var next_day = new Date(day)
           next_day.setDate(next_day.getDate() + 1)
@@ -171,28 +206,32 @@ switch (event) {
 
               cnt += 1
               if (cnt >= locations.length) {
-                //console.log('count: '+cnt.toString())
-                //console.log('time: '+(performance.now()-t0).toString())
+                // Finished updating map, set map title
                 p_map.title.text = day_str;
                 mpoly.data_source.change.emit()
 
-                if (next_day.getTime() > end_date.getTime()) {
-                  date_range_slider.value = [end_date.getTime(), end_date.getTime()];
-                  radioGroup_play_controls.active = play_controls.pause;
-                } else {
-                  date_range_slider.value = [next_day.getTime(), end_date.getTime()];
-                }
-                date_range_slider.change.emit()
+                // Finish up step and ready for next, when minimum time elapsed
+                var dt = performance.now() - t0
+                setTimeout(function() {
+                  // Update DateRangeSlider and play controls
+                  if (next_day.getTime() > end_date.getTime()) {
+                    date_range_slider.value = [end_date.getTime(), end_date.getTime()];
+                    radioGroup_play_controls.active = play_controls.pause;
+                  } else {
+                    date_range_slider.value = [next_day.getTime(), end_date.getTime()];
+                  }
+                  date_range_slider.change.emit()
 
-                switch (radioGroup_play_controls.active) {
-                  case play_controls.step:
-                    radioGroup_play_controls = play_controls.pause;
-                    break;
-                }
+                  switch (radioGroup_play_controls.active) {
+                    case play_controls.step:
+                      // if stepping, then goto pause which will trigger enabling the DateRangeSlider
+                      radioGroup_play_controls = play_controls.pause;
+                      break;
+                  }
+                }, spinner_minStepTime.value*1000 - dt);
               }
             }, 10000)
           }
-
           break;
       }
       break;

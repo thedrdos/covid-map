@@ -23,7 +23,7 @@ from bokeh.palettes import Magma11 as palette
 from bokeh.palettes import Inferno256, Turbo256
 from bokeh.plotting import figure
 from bokeh.models import Div
-from bokeh.models import ColumnDataSource, DateRangeSlider, Select
+from bokeh.models import ColumnDataSource, DateRangeSlider, Select, Spinner
 from bokeh.models.tools import HoverTool, BoxZoomTool  # for showing the hover tool
 
 from bokeh_template_external_js import template as template_ext_js
@@ -32,6 +32,7 @@ from bokeh import events
 from bokeh.models import Label, LabelSet, CustomJS, TapTool, Toggle, Button, Spacer, TextInput, RadioButtonGroup
 from bokeh.tile_providers import CARTODBPOSITRON_RETINA, get_provider
 import os
+import sys
 
 import numpy as np
 import datetime
@@ -233,6 +234,11 @@ for d in ds:
                  dimension='height', line_color='gray',
                  line_dash='dashed', line_width=2, line_alpha=0.5,
                  ))
+span_play_position = Span(location=latest_data_date,
+     dimension='height', line_color='gray',
+     line_dash='solid', line_width=2, line_alpha=0.5,
+     name='span_play_position')
+p_graph.add_layout(span_play_position)
 
 
 # # X axis formatting:
@@ -348,6 +354,7 @@ p_graph.js_on_event('doubletap', CustomJS(args={'p': p_graph, }, code="""
     p.reset.emit()
     """))
 
+
 """
 # Map widgets
 ------------------------------------------------------------------------------------------------
@@ -370,7 +377,7 @@ radioGroup_play_controls.js_on_click(CustomJS(args={
     code=callback_widgets))
 
 # %% Make date range slider
-date_range_slider = DateRangeSlider(value=((latest_data_date), (latest_data_date)),
+date_range_slider = DateRangeSlider(value=((latest_data_date-pd.DateOffset(months=1)), (latest_data_date)),
                                     start=(oldest_date_date), end=(latest_data_date),
                                     name='date_range_slider')
 date_range_slider.js_on_change("value", CustomJS(args={
@@ -379,6 +386,26 @@ date_range_slider.js_on_change("value", CustomJS(args={
             'mpoly': p_map_mpoly,
             'source_map': source_map,
             'p_map': p_map,
+},
+    code=callback_widgets
+))
+
+# Minumum time between animations on play, Spinner
+spinner_minStepTime = Spinner(title="",
+    low=0, high=5, step=0.25, value=1, width=100,format=FuncTickFormatter(code="""
+    return tick.toString()+" sec"
+"""),
+    name='spinner_minStepTime')
+
+# Respond to taps on the graph
+p_graph.js_on_event('tap', CustomJS(args={
+            'event': 'graph_tap',
+            'ext_datafiles': ext_datafiles,
+            'mpoly': p_map_mpoly,
+            'source_map': source_map,
+            'p_map': p_map,
+            'source_graph': source_graph,
+            'p_graph': p_graph,
 },
     code=callback_widgets
 ))
@@ -397,7 +424,7 @@ radioGroup_level_select.js_on_click(CustomJS(args={
 },
     code=callback_widgets))
 
-#
+# Choose to only see continental US
 continental_states = [
     'Alabama, US', 'Arizona, US', 'Arkansas, US', 'California, US', 'Colorado, US', 'Connecticut, US', 'Delaware, US', 'District of Columbia, US', 'Florida, US', 'Georgia, US', 'Idaho, US', 'Illinois, US', 'Indiana, US', 'Iowa, US', 'Kansas, US', 'Kentucky, US', 'Louisiana, US', 'Maine, US', 'Maryland, US', 'Massachusetts, US', 'Michigan, US', 'Minnesota, US', 'Mississippi, US', 'Missouri, US', 'Montana, US', 'Nebraska, US', 'Nevada, US', 'New Hampshire, US', 'New Jersey, US', 'New Mexico, US', 'New York, US', 'North Carolina, US', 'North Dakota, US', 'Ohio, US', 'Oklahoma, US', 'Oregon, US', 'Pennsylvania, US', 'Rhode Island, US', 'South Carolina, US', 'South Dakota, US', 'Tennessee, US', 'Texas, US', 'Utah, US', 'Vermont, US', 'Virginia, US', 'Washington, US', 'West Virginia, US', 'Wisconsin, US', 'Wyoming, US']
 
@@ -434,20 +461,20 @@ selectors_map.append(select)
 
 # Range setting for map
 map_range_widgets = []
-text_input = TextInput(value=str(color_mapper.low), title="Low Color")
-text_input.js_on_change("value", CustomJS(args={
-    'ext_datafiles': ext_datafiles,
-    'color_mapper': color_mapper,
-}, code="""
-     color_mapper.low = Number(this.value)
-"""))
-map_range_widgets.append(text_input)
 text_input = TextInput(value=str(color_mapper.high), title="High Color")
 text_input.js_on_change("value", CustomJS(args={
     'ext_datafiles': ext_datafiles,
     'color_mapper': color_mapper,
 }, code="""
     color_mapper.high = Number(this.value)
+"""))
+map_range_widgets.append(text_input)
+text_input = TextInput(value=str(color_mapper.low), title="Low Color")
+text_input.js_on_change("value", CustomJS(args={
+    'ext_datafiles': ext_datafiles,
+    'color_mapper': color_mapper,
+}, code="""
+     color_mapper.low = Number(this.value)
 """))
 map_range_widgets.append(text_input)
 
@@ -508,6 +535,20 @@ footer = Div(text="""
 </ul>
 """)
 
+data_notes = Div(text="""
+<b> Data Defintions: </b>
+<ul>
+    <li>Compatible with the <a href="https://covidtracking.com/about-data/data-definitions"> COVID Tracking Project data defintions</a>. </li>
+    <li>Countries may have `positive`, `death`, `recovered`, and their derivatives available.</li>
+    <li>USA states have most/all the data available.</li>
+    <li>USA counties of stats may have `positive`, `death`, `recovered`, and their derivatives available.</li>
+    <li>`recovered` is estimated where not available as `positive`-`death` after 15 days.</li>
+    <li>USA counties do not have `recovered` reported data, they are estimates.</li>
+    <li>Suffix of `MAV` denotes a one week moving average.</li>
+	<li>Suffix of `PerMil` denotes population normalization (persons per million).</li>
+	<li>`positiveActive` denotes `positive`-`recovered`-`death`.</li>
+</ul>
+""")
 
 # %% Combine all the graphs
 """
@@ -518,27 +559,38 @@ ________________________________________________________________________________
 # Layout the figures and show them
 p_map.sizing_mode = 'scale_width'
 p_graph.sizing_mode = 'scale_width'
-# layout = column(heading,
-#                 row(p_map, sizing_mode='scale_width'),
-#                 row(date_range_slider, sizing_mode='scale_width'),
-#                 row(column(selectors_graph[0],selectors_graph[1],selectors_graph[2],width=250,sizing_mode="scale_height"),p_graph, sizing_mode='scale_width'),
-#                 row(footer, sizing_mode='scale_width'),
-#                 sizing_mode='scale_width')
-# lout = layout([heading,
-#     [selectors_map+map_range_widgets+[play_button],p_map],
-#     date_range_slider,
-#     [selectors_graph,p_graph],
-#     footer
-#     ])
-lout = layout([heading,
-               [selectors_map + map_range_widgets + [radioGroup_level_select] +
-                   [button_continental_us_only], p_map],
-               [radioGroup_play_controls, date_range_slider],
-               [selectors_graph, p_graph],
-               footer
-               ])
-lout.margin = (4, 20, 4, 20)  # top, right, bottom, left
-lout.sizing_mode = 'scale_width'
-save(lout, template=template_ext_js(['jquary', 'pako']))
-# view(output_filename+'.html')
-# view('http://localhost:7800/'+localhost_path+this_filename+'.html')
+
+if len(sys.argv)==1:
+    print('Making non-mobile output version')
+    lout = layout([heading,
+                   [selectors_map + map_range_widgets + [radioGroup_level_select] +
+                       [button_continental_us_only]
+                       #+[Spacer(background='black',height=2)]
+                       +[Div(text="<center><i> Time History Animation </i></center>")]
+                       #+[Spacer(background='black',height=2)]
+                       +[[spinner_minStepTime,radioGroup_play_controls] ,date_range_slider], p_map],
+                   [selectors_graph, p_graph],
+                   footer
+                   ])
+    lout.margin = (4, 20, 4, 20)  # top, right, bottom, left
+    lout.sizing_mode = 'scale_width'
+    save(lout, template=template_ext_js(['jquary', 'pako']))
+    # view(output_filename+'.html')
+    # view('http://localhost:7800/'+localhost_path+this_filename+'.html')
+
+elif sys.argv[1]=='mobile':
+    print('Making mobile output version')
+    lout_mobile = layout([
+                    heading,
+                    [selectors_map]+map_range_widgets,
+                        [radioGroup_level_select,
+                        button_continental_us_only],
+                    p_map,
+                    [spinner_minStepTime,radioGroup_play_controls ,date_range_slider],
+                    p_graph,
+                    [[[selectors_graph]],data_notes],
+                    footer
+                   ])
+    lout_mobile.margin = (4, 20, 4, 20)  # top, right, bottom, left
+    lout_mobile.sizing_mode = 'scale_width'
+    save(lout_mobile,filename=output_filename+'_mobile.html',template=template_ext_js(['jquary', 'pako']))
