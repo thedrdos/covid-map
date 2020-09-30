@@ -458,7 +458,7 @@ p_world_map = figure(
     # sizing_mode='stretch_width',
     tools= "tap,pan,wheel_zoom,reset,save",active_tap='tap',
     toolbar_location=plot_settings['toolbar_location'],
-    # x_axis_location=None, y_axis_location=None,
+    x_axis_location=None, y_axis_location=None,
     x_axis_type="mercator", y_axis_type="mercator",
     sizing_mode = 'scale_width',
     aspect_ratio = 2,
