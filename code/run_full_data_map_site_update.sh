@@ -8,8 +8,20 @@ script_list=(
 "map_US_PerMil.py"
 "map_World_PerMil.py"
 "map_graph_Custom.py"
-"map_graph_Custom.py mobile"
+"map_graph_Custom.py"
 "make_website.py")
+
+arg_list=(
+""
+""
+""
+""
+""
+""
+""
+""
+"mobile"
+"")
 
 # The following is the actual script execution
 SECONDS=0
@@ -17,12 +29,13 @@ dur_arr=(0)
 i=0
 for s in ${script_list[@]};
 do
-  ((i=i+1))
   echo "####################################"
   echo "Running: " $s
   echo "####################################"
-  python $s || exit $i
+  echo $s ${arg_list[$i]}
+  python $s ${arg_list[$i]} || exit $i
 
+  ((i=i+1))
   dur_arr+=($SECONDS)
   echo "Completed in: $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) / 60)) minutes and $(($((${dur_arr[${#dur_arr[@]}-1]}-${dur_arr[${#dur_arr[@]}-2]})) % 60)) seconds."
 done
