@@ -544,9 +544,10 @@ data_notes = Div(text="""
     <li>USA counties of stats may have `positive`, `death`, `recovered`, and their derivatives available.</li>
     <li>`recovered` is estimated where not available as `positive`-`death` after 15 days.</li>
     <li>USA counties do not have `recovered` reported data, they are estimates.</li>
-    <li>Suffix of `MAV` denotes a one week moving average.</li>
-	<li>Suffix of `PerMil` denotes population normalization (persons per million).</li>
 	<li>`positiveActive` denotes `positive`-`recovered`-`death`.</li>
+    <li>Suffix of `MAV` denotes a one week moving average.</li>
+    <li>Suffix of `10` denotes multiplied by 10.</li>
+	<li>Suffix of `PerMil` denotes population normalization (persons per million).</li>
 </ul>
 """)
 
