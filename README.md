@@ -7,10 +7,32 @@ Main presentation page: [https://covid-interactive-map.netlify.com](https://covi
 * Normalization with respect to population (crude measure of societal pressure)
 
 ## Maps
-* [USA Map Online 4-month of data history](plots/map_4mon_external_data.html) (small file, loads fast, but fetches data online)
-* [USA Map Standalone with 4-months of data history](plots/map_4mon_standalone.html) (large file, may take a few sec to load)
+* [World Map Online, full length data history](plots/map_World_PerMil.html) (small file, loads fast, but fetches data online)
+* [USA Map Online, full length data history](plots/map_US_PerMil.html) (small file, loads fast, but fetches data online)
+* [World/USA/County Map Online, Customizable, with history Animation, full length data history](plots/map_graph_Custom.html) (small file, loads fast, but fetches data online)
+* [More mobile friendly version layout of the map above](plots/map_graph_Custom_mobile.html) (small file, loads fast, but fetches data online)
+* [USA Map Online, full length data history, default 4-month view ](plots/map_4mon_external_data.html) (small file, loads fast, but fetches data online)
+* [USA Map Standalone, truncated 4-month data history](plots/map_4mon_standalone.html) (large file, may take a few sec to load)
 
-## Implementation
+## Current Implementation
+
+Code written in Python (and Javascript) to generate interactive html page.
+
+The bash shell script `code/run_full_map_site_update.sh` runs all the necessary Python scripts/functions to generate the underlying data structures, maps, and html file/s.  The scripts create files in an untracked subdirectory `code/tmp_data/`  and generates a runtime performance report. Roughly:
+
+* `match_data_and_maps.py` Updates the COVID data, loads geographical data, matches the naming and organizes in dictionaries, saves to temporary data files.
+* `process_data_and_maps.py` Processes the data, calculating rates, averages, normalizations, and adding current stats to the geographical data, saves to temporary data files.
+* `make_external_datafiles.py` Writes the compressed external datafiles.
+* `map_4mon_external_data.py` (Legacy) Make the USA Map with state and county data history.
+* `map_4mon_standalone.py` (Legacy) Make the offline version USA Map with state and county data history, truncates the data history.
+* `map_US_PerMil.py` Make the USA Map with state and county population normalized COVID data history.
+* `map_World_PerMil.py` Make the World Map with population normalized COVID data history.
+* `map_graph_Custom.py` Make the customizable and graph, with animation function.
+* `map_graph_Custom.py` Same but with the `mobile` option, with improved layout for mobile use.
+* `make_website.py" Makes the acompanying website.
+* Normally takes about 2-3min to run (2.2GHz Intel Core i7, 16GB 2400 DDR4)
+
+## Legacy Implementation
 
 Code written in Python (and Javascript) to generate interactive html page.
 
