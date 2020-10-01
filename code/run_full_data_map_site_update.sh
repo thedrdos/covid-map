@@ -30,9 +30,8 @@ i=0
 for s in ${script_list[@]};
 do
   echo "####################################"
-  echo "Running: " $s
+  echo "Running: " $s ${arg_list[$i]}
   echo "####################################"
-  echo $s ${arg_list[$i]}
   python $s ${arg_list[$i]} || exit $i
 
   ((i=i+1))
