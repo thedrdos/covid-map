@@ -34,11 +34,11 @@ The bash shell script `code/run_full_map_site_update.sh` runs all the necessary 
 
 ## Tasklist
 - [x] Implement maps using external json files for data.
-- [ ] Generate a cumulative USA time history graph.
+- [x] Generate a cumulative USA time history graph.
 - [x] Fix/Workaround bug in Bokeh where patches with multiple polygons (NaN separated) seem to draw repeatedly (alpha will be wrong)
-- [ ] Make a world map similar to the states map/graph.
-- [ ] Incorporate additional data available for states
-- [ ] New map plot with customizable time history data graph.
+- [x] Make a world map similar to the states map/graph.
+- [x] Incorporate additional data available for states
+- [x] New map plot with customizable time history data graph.
 - [x] Rework the data structures generation with multithreading.
 - [x] Rework the data structures for efficiency and streamlining.  
-- [ ] Make option to switch normalization on/off
+- [x] Make option to switch normalization on/off (sort of, the custom map effectively let you)
