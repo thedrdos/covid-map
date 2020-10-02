@@ -78,7 +78,7 @@ javascript_path = './'+this_filename+'_js/'
 localhost_path  = './plots/'
 output_filename = "./../site/plots/"+this_filename # name the output file/s after the script file
 output_file(output_filename+".html",
-    title="Interactive Map of USA COVID19 Data with Time History")#title=filename(output_filename))
+    title="Interactive Map of World COVID19 Data with Time History")#title=filename(output_filename))
 
 # %%
 """
