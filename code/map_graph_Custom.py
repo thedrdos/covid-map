@@ -392,7 +392,7 @@ date_range_slider.js_on_change("value", CustomJS(args={
 
 # Minumum time between animations on play, Spinner
 spinner_minStepTime = Spinner(title="",
-    low=0, high=5, step=0.25, value=1, width=100,format=FuncTickFormatter(code="""
+    low=0, high=5, step=0.25, value=0.25, width=100,format=FuncTickFormatter(code="""
     return tick.toString()+" sec"
 """),
     name='spinner_minStepTime')
