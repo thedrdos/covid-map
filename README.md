@@ -29,7 +29,7 @@ The bash shell script `code/run_full_map_site_update.sh` runs all the necessary 
 * `map_World_PerMil.py` Make the World Map with population normalized COVID data history.
 * `map_graph_Custom.py` Make the customizable and graph, with animation function.
 * `map_graph_Custom.py` Same but with the `mobile` option, with improved layout for mobile use.
-* `make_website.py" Makes the acompanying website.
+* `make_website.py` Makes the acompanying website.
 * Normally takes about 2-3min to run (2.2GHz Intel Core i7, 16GB 2400 DDR4)
 
 ## Sources
