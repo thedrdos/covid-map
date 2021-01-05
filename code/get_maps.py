@@ -29,6 +29,7 @@ from shapely.geometry.multipolygon import MultiPolygon
 
 
 def get_maps(entity='county',resolution='high', local_file_path='./map_data/', year = (datetime.datetime.now().year-1)):
+    year = 2019 # hardcode the year in early 2020 because census website not yet updated
     map_coordsys = 3857 #4326;#3395 # epsg
 
     entities = {
