@@ -1,4 +1,4 @@
-"""
+re.match('\d+\:\d+\s*\-\s*\d+\:\d+',''.join(sd[i]))"""
 Fix weird issue with linebreak characters from Spyder.
 Linebreaks show up correctly in Spyder but not in Atom or GitHub.
 
