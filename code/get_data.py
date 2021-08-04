@@ -51,7 +51,8 @@ def reread_csv(src):
 
 
 # %% Data sources
-# Covid Tracking Project for US data
+# Covid Tracking Project for US data has been sunset
+# Using NYT data for cases and deaths
 csv_data_file_US  = {
     'timeseries_NYT_states_rolling':   '../DataSet/NYT/rolling-averages/us-states.csv', #in this set 'cases' is increase per day
     'timeseries_NYT_states_live':   '../DataSet/NYT/live/us-states.csv',
