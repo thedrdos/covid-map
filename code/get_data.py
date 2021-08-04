@@ -53,6 +53,7 @@ def reread_csv(src):
 # %% Data sources
 # Covid Tracking Project for US data
 csv_data_file_US  = {
+    'timeseries_NYT_states':   '../DataSet/NYT/rolling-averages/us-states.csv',
     'timeseries':   '../DataSet/CTP/data/states_daily_4pm_et.csv',
     'info':         '../DataSet/CTP/data/states_info.csv',
     'pop_info':     '../DataSet/JH/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv',
@@ -81,18 +82,26 @@ def update():
     os.system("git submodule update --recursive --remote")
     return None
 
-    # %% Load USA data
-def load_US():
+# %% Load USA data
+def load_US(dbtype="CTP"):
     """
     Use load_state() instead of this function
     """
-    # Get data
-    # Load data using Pandas
-    df = reread_csv(csv_data_file_US["timeseries"])
-    # Make sure date data is formatted correctly/consitently and typecast
-    df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
-    df = df.set_index('date')
-    df.sort_index(inplace=True)
+    # Get data depending on database type choice
+    if dbtype is "CTP":
+        # Load data using Pandas
+        df = reread_csv(csv_data_file_US["timeseries"])
+        # Make sure date data is formatted correctly/consitently and typecast
+        df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
+        df = df.set_index('date')
+        df.sort_index(inplace=True)
+    elif dbtype is "NYT_states":
+        # Load data using Pandas
+        df = reread_csv(csv_data_file_US["timeseries_NYT_states"])
+        # Make sure date data is formatted correctly/consitently and typecast
+        df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+        df = df.set_index('date')
+        df.sort_index(inplace=True)
     return df
 
 def get_states():
@@ -108,24 +117,34 @@ def load_state(state):
     """
     Given a country name (str), return a dataframe with the data for that country
     """
-
     if isinstance(state,list):
         pass
     else:
         state = [state]
-    state_org = state
-    state = get_state_abbreviation(state)
+    state_org = state.copy()
+    for n, st in enumerate(state):
+        if st.endswith(', US'):
+            state[n] = st[0:-4]
 
-    # Load the US data
-    dso = load_US()
+    state_abr = get_state_abbreviation(state)
 
-    names = get_state_name(state)
+    # # Load the US data
+    # dso = load_US()
+
+    dso = load_US(dbtype="NYT_states")
+
+    names = get_state_name(state_abr)
     lonlat = get_state_location(names)
     pop   = get_state_population(names)
 
     out ={}
     for n, s in enumerate(state):
         ds = dso[dso['state']==s] # Select the state
+        ds = ds.assign(state=state_abr[n])
+        ds['positive'] = ds.loc[:,'cases']
+        ds['death'] = ds.loc[:,'deaths']
+        ds['recovered'] = ds.loc[:,'cases'];
+        ds = ds.assign(recovered=float('NaN'));
         ds = ds[ds['positive'].notna()] # Remove rows with no total positive cases reported
         ds = ds[ds['positive']!=0]      # Remove rows with zero total positive cases reported
 

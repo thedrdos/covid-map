@@ -4,3 +4,6 @@
 [submodule "DataSet/CTP"]
 	path = DataSet/CTP
 	url = https://github.com/COVID19Tracking/covid-tracking-data.git
+[submodule "DataSet/NYT"]
+	path = DataSet/NYT
+	url = https://github.com/nytimes/covid-19-data.git
