@@ -2,6 +2,10 @@
 script_list=(
 "map_4mon_external_data.py"
 "map_4mon_standalone.py"
+"map_US_PerMil.py"
+"map_World_PerMil.py"
+"map_graph_Custom.py"
+"map_graph_Custom.py"
 "make_website.py")
 
 # The following is the actual script execution
