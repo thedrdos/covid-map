@@ -53,8 +53,9 @@ def reread_csv(src):
 # %% Data sources
 # Covid Tracking Project for US data
 csv_data_file_US  = {
-    'timeseries_NYT_states':   '../DataSet/NYT/live/us-states.csv',
-    'timeseries_NYT_states_computed':   '../DataSet/NYT/rolling-averages/us-states.csv',
+    'timeseries_NYT_states_rolling':   '../DataSet/NYT/rolling-averages/us-states.csv', #in this set 'cases' is increase per day
+    'timeseries_NYT_states_live':   '../DataSet/NYT/live/us-states.csv',
+    'timeseries_NYT_states':   '../DataSet/NYT/us-states.csv', #in this set 'cases' is cumulative
     'timeseries':   '../DataSet/CTP/data/states_daily_4pm_et.csv',
     'info':         '../DataSet/CTP/data/states_info.csv',
     'pop_info':     '../DataSet/JH/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv',
@@ -145,7 +146,7 @@ def load_state(state):
         ds['positive'] = ds.loc[:,'cases']
         ds['death'] = ds.loc[:,'deaths']
         ds['recovered'] = ds.loc[:,'cases'];
-        ds = ds.assign(recovered=float('NaN'));
+        ds = ds.assign(recovered=float('NaN'))
         ds = ds[ds['positive'].notna()] # Remove rows with no total positive cases reported
         ds = ds[ds['positive']!=0]      # Remove rows with zero total positive cases reported
 
