@@ -53,7 +53,8 @@ def reread_csv(src):
 # %% Data sources
 # Covid Tracking Project for US data
 csv_data_file_US  = {
-    'timeseries_NYT_states':   '../DataSet/NYT/rolling-averages/us-states.csv',
+    'timeseries_NYT_states':   '../DataSet/NYT/live/us-states.csv',
+    'timeseries_NYT_states_computed':   '../DataSet/NYT/rolling-averages/us-states.csv',
     'timeseries':   '../DataSet/CTP/data/states_daily_4pm_et.csv',
     'info':         '../DataSet/CTP/data/states_info.csv',
     'pop_info':     '../DataSet/JH/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv',
