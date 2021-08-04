@@ -130,7 +130,7 @@ with gzip.GzipFile(ext_datafiles['path'] + ext_datafiles['location_to_filename']
 init_data = dic_nan_decode(init_datafile['data'], init_datafile['nan_code'])
 init_data['date'] = pd.to_datetime(init_data['date'])
 latest_data_date = pd.to_datetime('today') #max(init_data['date'])
-oldest_date_date = min(init_data['date'])
+oldest_date_date = pd.to_datetime('20191101',format='%Y%m%d') #min(init_data['date'])
 
 init_location = 'Earth'  # get location
 with gzip.GzipFile(ext_datafiles['path'] + ext_datafiles['location_to_filename'][init_location] + '_map.json.gz', 'r') as fin:
