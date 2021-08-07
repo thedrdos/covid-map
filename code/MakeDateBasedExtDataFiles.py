@@ -34,8 +34,8 @@ Load Data
 print("Load Data:")
 t0 = pnow()
 
-src = "../../DataSet/NYT/rolling-averages/us-counties-recent.csv"
-src = "../../DataSet/NYT/rolling-averages/us-counties.csv"
+# src = "../DataSet/NYT/rolling-averages/us-counties-recent.csv"
+src = "../DataSet/NYT/rolling-averages/us-counties.csv"
 df = pd.read_csv(src)
 df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
 df.set_index('date',inplace=True)
@@ -122,7 +122,7 @@ This allows consistent file naming if locations are added or removed.
 Of course, the file name will change if the location name is changed. 
 ------------------------------------------------------------------------------
 '''
-ext_data_path = "../../site/plots/data/" 
+ext_data_path = "../site/plots/data/" 
 # ext_data_path = "./tmpdata/" 
 
 

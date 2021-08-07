@@ -25,6 +25,6 @@ Code written in Python (and Javascript) to generate interactive html page.
 * GitHub repository for this project: [https://github.com/thedrdos/covid-map](https://github.com/thedrdos/covid-map)
 * State and County Geographical Data from [The US Census Bureau](http://www2.census.gov/geo/tiger/)
 * COVID-19 Data on States from [The New York Times](https://www.nytimes.com/interactive/2021/us/covid-cases.html) on [GitHub](https://github.com/nytimes/covid-19-data).
-* ~~COVID-19 Data on States from [The COVID Tracking Project](https://covidtracking.com) or on [GitHub](https://github.com/COVID19Tracking/covid-tracking-data)~~ (project sunset)
+* ~~COVID-19 Data on States from [The COVID Tracking Project](https://covidtracking.com) or on [GitHub](https://github.com/COVID19Tracking/covid-tracking-data)~~ (this project has been sunset).
 * COVID-19 Data on Countries and Counties from [The John Hopkins University Coronavirus Resource Center](https://coronavirus.jhu.edu) or on [GitHub](https://github.com/CSSEGISandData/COVID-19.gi)
 

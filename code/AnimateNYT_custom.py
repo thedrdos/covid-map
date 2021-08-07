@@ -75,9 +75,10 @@ this_filename = filename(os.path.basename(os.path.splitext(__file__)[0]))
 javascript_path = './' + this_filename + '_js/'
 localhost_path = './plots/'
 # name the output file/s after the script file
-output_filename = "../../site/plots/" + this_filename
+# output_filename = "../../site/plots/" + this_filename
+output_filename = "../site/plots/" + this_filename
 output_file(output_filename + ".html",
-            title="Animated Map of World COVID19 Data, NYT Styled")  # title=filename(output_filename))
+            title="Animated COVID-19 Data Mapped For US Counties - NYT Styled")  # title=filename(output_filename))
 
 """
 # Support functions
@@ -106,7 +107,8 @@ def array_element_replace(arr, old_value, new_value):
 ________________________________________________________________________________
 """
 ext_datafiles = {
-    'path': "../../site/plots/data/",
+    # 'path': "../../site/plots/data/",
+    'path': "../site/plots/data/",
     'rel_path': "./data/",
 }
 with gzip.GzipFile(ext_datafiles['path'] + 'filename_to_location.json.gz', 'r') as fin:
@@ -165,7 +167,7 @@ for n, l in enumerate(init_map['location']):
     if l not in init_locations:
         lclosest = difflib.get_close_matches(l,init_locations,n=1)[0]
         init_map['location'][n] =  lclosest
-        print("  Replaced: "+l+" with "+"\t"+lclosest)
+        print("  Replaced: "+l+"\t\t -> \t"+lclosest)
 
 for l in init_map['location']: # 
     if l in init_locations:
@@ -202,9 +204,10 @@ source_map = ColumnDataSource(init_map)
 ________________________________________________________________________________
 """
 palette = Turbo256[128:-1:5]
+# color_mapper = LinearColorMapper(
+#     palette=palette, low=0, high=2 * len(palette))
 color_mapper = LinearColorMapper(
-    palette=palette, low=0, high=2 * len(palette))
-
+    palette=palette, low=0, high=80)
 color_bar = ColorBar(
     color_mapper=color_mapper,
     label_standoff=2, border_line_color=None, location=(0, 0),
@@ -253,11 +256,11 @@ p_map.add_layout(color_bar, 'right')
 hoverm = HoverTool()
 hoverm.tooltips = [
     ('Name', "@name"),
-    ("Population", "@population{0,0.}"),
+    ("Population~", "@population{0,0.}"),
     #("Current COVID Statistics","{}".format('-'*15)),
+    ('Cases Avg per 100k', "@cases_avg_per_100k{0,0.0}"),
+    ('Deaths Avg per 100k', "@deaths_avg_per_100k{0,0.0}"),
     ('Cases', "@cases{0,0.}"),
-    ('Cases Avg per 100k', "@cases_avg_per_100k{0,0.}"),
-    ('Deaths Avg per 100k', "@deaths_avg_per_100k{0,0.}"),
 ]
 p_map.add_tools(hoverm)
 
@@ -379,16 +382,14 @@ map_range_widgets.append(text_input)
 # %% Make heading for the whole thing
 """
 heading = Div(text="""
-<h1> Time Animated COVID-19 Data Mapped For US Counties, NYT Styled</h1>
-<p>Shows all the counties colored according to last weeks average number of new COVID-19 cases per day with county population normalization  (number of people per 100k).</p>
+<h1> Animated COVID-19 Data Mapped For US Counties - NYT Styled</h1>
+<p>Shows the continental US heatmapped to the previous weeks average number of COVID-19 cases per 100k people in each county.</p>
 <ul>
 	<li>Higher color number corresponds to faster spread of the virus.</li>
     <li>On the left of each graph thera are tools to zoom/pan/reset/save.</li>
 	<li>On Mobile: Use two finger to scroll the page.</li>
     <li>Data last updated on: {data_update} </li>
 </ul>
-
-<h3> Tap on any country to show the COVID19 data time history graph below. </h3>
 """.format(
     data_update=pd.to_datetime(latest_data_date).strftime('%Y-%m-%d'),
     graph_update=pd.Timestamp.now().strftime('%Y-%m-%d'),
@@ -400,6 +401,54 @@ footer = Div(text="""
     <li>GitHub repository for this project: <a href="https://github.com/thedrdos/covid-map"> https://github.com/thedrdos/covid-map </a>. </li>
     <li>Produced using Python with Bokeh and other modules.</li>
 	<li>Data sourced from <a href="https://github.com/nytimes/covid-19-data"> The New York Times COVID Data GitHub Repository</a>. </li>
+</ul>
+<h4> Data Defintions: </h4>
+<ul>
+    <li>Documented at <a href="https://github.com/nytimes/covid-19-data"> The New York Times COVID Data GitHub Repository</a>. </li>
+    <li>Mimics the non-animated <a href="https://www.nytimes.com/interactive/2021/us/covid-cases.html"> interactive map from The New York Times Online</a>.</li>
+</ul>
+<h4> Errata - Map tied to possibly incorrect county data: </h4>
+<ul>
+<li> Dona Ana, New Mexico, US		 -&gt; 	Doña Ana, New Mexico, US</li>
+<li> New York, New York, US		 -&gt; 	New York City, New York, US</li>
+<li> Bronx, New York, US		 -&gt; 	Broome, New York, US</li>
+<li> Queens, New York, US		 -&gt; 	Greene, New York, US</li>
+<li> Richmond, New York, US		 -&gt; 	Rockland, New York, US</li>
+<li> Kings, New York, US		 -&gt; 	Wyoming, New York, US</li>
+<li> Williamsburg, Virginia, US		 -&gt; 	Williamsburg city, Virginia, US</li>
+<li> Emporia, Virginia, US		 -&gt; 	Emporia city, Virginia, US</li>
+<li> Salem, Virginia, US		 -&gt; 	Salem city, Virginia, US</li>
+<li> Portsmouth, Virginia, US		 -&gt; 	Portsmouth city, Virginia, US</li>
+<li> Virginia Beach, Virginia, US		 -&gt; 	Virginia Beach city, Virginia, US</li>
+<li> Danville, Virginia, US		 -&gt; 	Danville city, Virginia, US</li>
+<li> Lynchburg, Virginia, US		 -&gt; 	Lynchburg city, Virginia, US</li>
+<li> Falls Church, Virginia, US		 -&gt; 	Falls Church city, Virginia, US</li>
+<li> Bristol, Virginia, US		 -&gt; 	Bristol city, Virginia, US</li>
+<li> Hopewell, Virginia, US		 -&gt; 	Hopewell city, Virginia, US</li>
+<li> Manassas, Virginia, US		 -&gt; 	Manassas city, Virginia, US</li>
+<li> Waynesboro, Virginia, US		 -&gt; 	Waynesboro city, Virginia, US</li>
+<li> Galax, Virginia, US		 -&gt; 	Halifax, Virginia, US</li>
+<li> Martinsville, Virginia, US		 -&gt; 	Martinsville city, Virginia, US</li>
+<li> Lexington, Virginia, US		 -&gt; 	Lexington city, Virginia, US</li>
+<li> Norfolk, Virginia, US		 -&gt; 	Norfolk city, Virginia, US</li>
+<li> Alexandria, Virginia, US		 -&gt; 	Alexandria city, Virginia, US</li>
+<li> Newport News, Virginia, US		 -&gt; 	Newport News city, Virginia, US</li>
+<li> Staunton, Virginia, US		 -&gt; 	Staunton city, Virginia, US</li>
+<li> Charlottesville, Virginia, US		 -&gt; 	Charlottesville city, Virginia, US</li>
+<li> Colonial Heights, Virginia, US		 -&gt; 	Colonial Heights city, Virginia, US</li>
+<li> Petersburg, Virginia, US		 -&gt; 	Petersburg city, Virginia, US</li>
+<li> Radford, Virginia, US		 -&gt; 	Bedford, Virginia, US</li>
+<li> Hampton, Virginia, US		 -&gt; 	Hampton city, Virginia, US</li>
+<li> Poquoson, Virginia, US		 -&gt; 	Poquoson city, Virginia, US</li>
+<li> Chesapeake, Virginia, US		 -&gt; 	Chesapeake city, Virginia, US</li>
+<li> Buena Vista, Virginia, US		 -&gt; 	Buena Vista city, Virginia, US</li>
+<li> Fredericksburg, Virginia, US		 -&gt; 	Fredericksburg city, Virginia, US</li>
+<li> Suffolk, Virginia, US		 -&gt; 	Suffolk city, Virginia, US</li>
+<li> Winchester, Virginia, US		 -&gt; 	Winchester city, Virginia, US</li>
+<li> Harrisonburg, Virginia, US		 -&gt; 	Harrisonburg city, Virginia, US</li>
+<li> Manassas Park, Virginia, US		 -&gt; 	Manassas Park city, Virginia, US</li>
+<li> Covington, Virginia, US		 -&gt; 	Covington city, Virginia, US</li>
+<li> Norton, Virginia, US		 -&gt; 	Norton city, Virginia, US</li>
 </ul>
 """)
 
@@ -423,11 +472,11 @@ p_map.sizing_mode = 'scale_width'
 print('Making mobile output version')
 lout_mobile = layout([
                 heading,
-                [selectors_map]+map_range_widgets,
+                [spinner_minStepTime,radioGroup_play_controls ,date_range_slider],
                     #[radioGroup_level_select,
                     #button_continental_us_only],
                 p_map,
-                [spinner_minStepTime,radioGroup_play_controls ,date_range_slider],
+                [selectors_map]+map_range_widgets,
                 footer
                 ])
 lout_mobile.margin = (4, 20, 4, 20)  # top, right, bottom, left
