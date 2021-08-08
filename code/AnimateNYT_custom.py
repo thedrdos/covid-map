@@ -249,7 +249,7 @@ p_map_mpoly = p_map.multi_polygons(
                 'transform': color_mapper},
     fill_alpha=0.6,
     line_color="white",
-    line_width=0.5,
+    line_width=0.1,
 )
 p_map.add_layout(color_bar, 'right')
 # Add the hover tool to show the state name and number of counties
@@ -387,6 +387,7 @@ heading = Div(text="""
 <ul>
 	<li>Higher color number corresponds to faster spread of the virus.</li>
     <li>On the left of each graph thera are tools to zoom/pan/reset/save.</li>
+    <li>Double tap the map to reset zoom/pan.</li>
 	<li>On Mobile: Use two finger to scroll the page.</li>
     <li>Data last updated on: {data_update} </li>
 </ul>
