@@ -327,6 +327,17 @@ radioGroup_play_controls.js_on_click(CustomJS(args={
              },
     code=callback_widgets))
 
+button_toggle_states_outline = Button(label='Toggle State Outlines',name='button_toggle_states_outline')
+button_toggle_states_outline.js_on_click(CustomJS(args={
+            'event': 'button_toggle_states_outline',
+            'ext_datafiles': ext_datafiles,
+            'mpoly': p_map_mpoly,
+            'source_map': source_map,
+            'p_map': p_map,
+            'p_statesmap_mpoly': p_statesmap_mpoly,
+             },
+    code=callback_widgets))
+
 # %% Make date range slider
 date_range_slider = DateRangeSlider(value=((latest_data_date-pd.DateOffset(months=1)), (latest_data_date)),
                                     start=(oldest_date_date), end=(latest_data_date),
@@ -500,6 +511,7 @@ lout_mobile = layout([
                     #[radioGroup_level_select,
                     #button_continental_us_only],
                 p_map,
+                [button_toggle_states_outline],
                 [selectors_map]+map_range_widgets,
                 footer
                 ])

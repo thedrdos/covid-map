@@ -20,6 +20,7 @@ const radioGroup_level_select = window.Bokeh.documents[0].get_model_by_name('rad
 const date_range_slider = window.Bokeh.documents[0].get_model_by_name('date_range_slider')
 const spinner_minStepTime = window.Bokeh.documents[0].get_model_by_name('spinner_minStepTime')
 const radioGroup_play_controls = window.Bokeh.documents[0].get_model_by_name('radioGroup_play_controls')
+const button_toggle_states_outline = window.Bokeh.documents[0].get_model_by_name('button_toggle_states_outline')
 const play_controls = {
   'play': 0,
   'step': 1,
@@ -136,6 +137,9 @@ switch (event) {
   //   }
   //   break;
 
+  case 'button_toggle_states_outline':
+    p_statesmap_mpoly.visible = !p_statesmap_mpoly.visible;
+    break;
 
   case 'date_range_slider':
     var start_date = new Date(date_range_slider.value[0])
