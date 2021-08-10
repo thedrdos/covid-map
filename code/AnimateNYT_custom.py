@@ -157,6 +157,9 @@ with gzip.GzipFile(ext_datafiles['path'] + ext_datafiles['location_to_filename']
 for k in list(USstates_mapfile['data'].keys()):
     if k not in ['x','y','location','name']:
         USstates_mapfile['data'].pop(k)
+USstates_map = {}
+for k in USstates_mapfile['data']:
+    USstates_map[k] = [USstates_mapfile['data'][k][n] for n in range(0,len(USstates_mapfile['data'][k])) if USstates_mapfile['data']['location'][n] in continental_states]
 
 init_date = pd.to_datetime(max(ext_datafiles['filename_to_date'].values()));
 with gzip.GzipFile(ext_datafiles['path'] + ext_datafiles['date_to_filename'][str(init_date.value)] + '.json.gz', 'r') as fin:
@@ -201,6 +204,7 @@ init_map1 = init_mapfile1['data']
 # Create source data structure and initialize state map
 # source_graph = ColumnDataSource(init_data)
 source_map = ColumnDataSource(init_map)
+source_statesmap = ColumnDataSource(USstates_map)
 # Erase the underlying data to reduce the html filesize (will be loaded upon user tap feedback)
 # source_graph.data = {k: source_graph.data[k][-2:-1] for k in source_graph.data}
 
@@ -248,6 +252,7 @@ p_map.toolbar.active_drag = None  # bztool_s
 tile_provider = get_provider(CARTODBPOSITRON_RETINA)
 p_map.add_tile(tile_provider)
 
+
 # Add the states1
 p_map_mpoly = p_map.multi_polygons(
     xs='x', ys='y', source=source_map,
@@ -268,7 +273,19 @@ hoverm.tooltips = [
     ('Deaths Avg per 100k', "@deaths_avg_per_100k{0,0.0}"),
     ('Cases', "@cases{0,0.}"),
 ]
+hoverm.renderers = [p_map_mpoly] # only use hovertool for the heatmaps, not the state outlines added below
 p_map.add_tools(hoverm)
+
+# Add the states outline
+p_statesmap_mpoly = p_map.multi_polygons(
+    xs='x', ys='y', source=source_statesmap,
+    fill_color=None,
+    fill_alpha=0,
+    hover_fill_alpha=0,
+    line_color="white",
+    line_width=1,
+)
+
 
 # # Add taptool to select from which state to show all the counties
 # with open(javascript_path + 'callback_map.js', 'r') as f:
