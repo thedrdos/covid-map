@@ -151,6 +151,12 @@ for l in continental_states:
     init_map['location'].extend(init_mapfile['data']['location'])
     init_map['population'].extend(init_mapfile['data']['population'])
 
+with gzip.GzipFile(ext_datafiles['path'] + ext_datafiles['location_to_filename']['US'] + '_map.json.gz', 'r') as fin:
+    USstates_mapfile = json.loads(fin.read().decode('utf-8'))
+
+for k in list(USstates_mapfile['data'].keys()):
+    if k not in ['x','y','location','name']:
+        USstates_mapfile['data'].pop(k)
 
 init_date = pd.to_datetime(max(ext_datafiles['filename_to_date'].values()));
 with gzip.GzipFile(ext_datafiles['path'] + ext_datafiles['date_to_filename'][str(init_date.value)] + '.json.gz', 'r') as fin:
