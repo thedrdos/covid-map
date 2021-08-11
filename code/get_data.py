@@ -49,7 +49,6 @@ def reread_csv(src):
         df = pd.read_csv(re.search('https.*',df.columns.tolist()[0]).group())
     return df
 
-
 # %% Data sources
 # Covid Tracking Project for US data has been sunset
 # Using NYT data for cases and deaths
