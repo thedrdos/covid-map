@@ -26,11 +26,26 @@ import gzip
 
 T0 = now()
 
+# %% Update and denote datafiles
+def update():
+    """
+    Updates the Database
+
+    Returns
+    -------
+    None.
+
+    """
+    os.system("git submodule update --recursive --remote")
+    return None
+
 '''
 ------------------------------------------------------------------------------
 Load Data
 ------------------------------------------------------------------------------
 '''
+print('Update data')
+update()
 print("Load Data:")
 t0 = pnow()
 
